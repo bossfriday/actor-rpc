@@ -8,5 +8,5 @@ public interface IMsgHandler {
      *
      * @param msg
      */
-    public void msgHandle(Message msg);
+    void msgHandle(Message msg);
 }

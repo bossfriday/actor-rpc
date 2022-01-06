@@ -10,12 +10,12 @@ public interface IServer {
      * @param workerGroup
      * @throws Exception
      */
-    public void run(EventLoopGroup bossGroup, EventLoopGroup workerGroup) throws Exception;
+    void run(EventLoopGroup bossGroup, EventLoopGroup workerGroup) throws Exception;
 
     /**
      * close
      *
      * @throws Exception
      */
-    public void close() throws Exception;
+    void close() throws Exception;
 }

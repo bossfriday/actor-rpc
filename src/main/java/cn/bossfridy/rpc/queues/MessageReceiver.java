@@ -1,4 +1,4 @@
-package cn.bossfridy.rpc.actor;
+package cn.bossfridy.rpc.queues;
 
 import cn.bossfridy.rpc.transport.Message;
 

@@ -1,28 +1,41 @@
 package cn.bossfridy.rpc.thread;
 
+import cn.bossfridy.rpc.Const;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.concurrent.*;
 
 public class ThreadPoolHelper {
-    private static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
     private static final ConcurrentHashMap<String, ExecutorService> threadMap = new ConcurrentHashMap<>();
 
     static {
         // todo: 加载线程配置
     }
 
-    /**
-     * getThreadPool
-     */
     public static ExecutorService getThreadPool(String name) {
-//        return getThreadPool(name, AVAILABLE_PROCESSORS);
-        return null;
+        return getThreadPool(name, Const.AVAILABLE_PROCESSORS);
+    }
+
+    public static ExecutorService getThreadPool(String name, int size) {
+        return getThreadPool(name, name, size);
+    }
+
+    public static ExecutorService getThreadPool(String name,
+                                                String threadNamePrefix,
+                                                int coreSize) {
+        return getThreadPool(name, threadNamePrefix, coreSize, 0);
+    }
+
+    public static ExecutorService getThreadPool(String name,
+                                                String threadNamePrefix,
+                                                int coreSize,
+                                                int workerQueueSize) {
+        return getThreadPool(name, threadNamePrefix, coreSize, coreSize * 2, workerQueueSize, new ThreadPoolExecutor.AbortPolicy());
     }
 
     /**
-     * @param name 线程池的名字,
+     * @param name 线程池名称,
      * @param threadNamePrefix 线程名称前缀.
      * @param coreSize 线程数量. 必须> 1
      * @param maxThreadSize 最大数量. 必须> 1 ,并且大于 coreSize ,否则使用coreSize
@@ -72,7 +85,7 @@ public class ThreadPoolHelper {
     }
 
     private static int getCoreSize(String name, int coreSize) {
-        // todo:有配置走配置
+        // todo:有配置优先走配置
         return coreSize;
     }
 }

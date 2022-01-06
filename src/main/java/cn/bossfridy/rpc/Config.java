@@ -1,4 +1,4 @@
-package cn.bossfridy.rpc.config;
+package cn.bossfridy.rpc;
 
 import lombok.Getter;
 import lombok.Setter;

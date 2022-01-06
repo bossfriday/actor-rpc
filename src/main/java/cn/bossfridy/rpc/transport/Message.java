@@ -4,10 +4,10 @@ import cn.bossfridy.rpc.utils.NumberUtil;
 import cn.bossfridy.rpc.utils.UUIDUtil;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
+import org.apache.commons.lang.StringUtils;
 
 @Data
 public class Message {
-
     private int type;
 
     private byte[] session;
@@ -40,6 +40,13 @@ public class Message {
             throw new RuntimeException("Message.session is null or empty!");
 
         return UUIDUtil.getShortString(this.session);
+    }
+
+    /**
+     * hasSource
+     */
+    public boolean hasSource() {
+        return StringUtils.isNotEmpty(sourceHost) && sourcePort > 0 && !"0.0.0.0".equals(sourceHost);
     }
 
     /**

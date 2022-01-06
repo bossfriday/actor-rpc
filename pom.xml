@@ -17,6 +17,7 @@
         <guava.version>31.0.1-jre</guava.version>
         <protostuff.version>1.7.2</protostuff.version>
         <commons-lang.version>2.6</commons-lang.version>
+        <commons-pool2.version>2.11.1</commons-pool2.version>
     </properties>
 
     <repositories>
@@ -88,6 +89,12 @@
             <artifactId>protostuff-runtime</artifactId>
             <version>${protostuff.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>${commons-pool2.version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>
