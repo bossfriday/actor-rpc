@@ -1,5 +1,6 @@
 package cn.bossfridy.rpc;
 
+import cn.bossfridy.rpc.dispatch.ActorDispatcher;
 import cn.bossfridy.rpc.queues.MessageReceiver;
 import cn.bossfridy.rpc.queues.MessageSender;
 import cn.bossfridy.rpc.interfaces.IActorMsgDecoder;
@@ -14,6 +15,9 @@ public class ActorSystem {
 
     @Getter
     private MessageSender sender;
+
+    @Getter
+    private ActorDispatcher actorDispatcher;
 
     @Getter
     private IActorMsgEncoder msgEncoder;

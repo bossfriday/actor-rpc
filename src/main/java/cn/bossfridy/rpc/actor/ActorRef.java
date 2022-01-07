@@ -3,15 +3,24 @@ package cn.bossfridy.rpc.actor;
 import cn.bossfridy.rpc.ActorSystem;
 import cn.bossfridy.rpc.interfaces.IActorMsgEncoder;
 import cn.bossfridy.rpc.queues.MessageSender;
-import cn.bossfridy.rpc.utils.UUIDUtil;
+import cn.bossfridy.rpc.transport.Message;
+import cn.bossfridy.rpc.utils.ObjectCodecUtil;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
+
+@Slf4j
 public class ActorRef {
     private String host;
     private int port;
     private String method;
+
+    @Getter
     private byte[] session;
+
     private MessageSender messageSender;
-    private IActorMsgEncoder resMsgEncoder;
+    private IActorMsgEncoder tellEncoder;
     private ActorSystem actorSystem;
     private UntypedActor callbackActor;
     private long ttl;
@@ -29,7 +38,7 @@ public class ActorRef {
         this.ttl = ttl;
         if (this.actorSystem != null) {
             this.messageSender = this.actorSystem.getSender();
-            this.resMsgEncoder = this.actorSystem.getMsgEncoder();
+            this.tellEncoder = this.actorSystem.getMsgEncoder();
         }
     }
 
@@ -41,7 +50,7 @@ public class ActorRef {
         this.actorSystem = actorSystem;
         if (this.actorSystem != null) {
             this.messageSender = this.actorSystem.getSender();
-            this.resMsgEncoder = this.actorSystem.getMsgEncoder();
+            this.tellEncoder = this.actorSystem.getMsgEncoder();
         }
     }
 
@@ -49,7 +58,36 @@ public class ActorRef {
      * tell
      */
     public void tell(Object message, ActorRef sender) {
+        if (sender == null) {
+            log.info("Can not specify sender when tell.");
 
+            return;
+        }
+
+        if (this.messageSender != null) {
+            Message msg = new Message();
+            msg.setSession(this.session);
+            msg.setTargetHost(this.host);
+            msg.setTargetPort(this.port);
+            msg.setTargetMethod(this.method);
+            msg.setSourceHost(sender.host);
+            msg.setSourcePort(sender.port);
+            msg.setSourceMethod(sender.method);
+            msg.setData(tellEncode(message));
+
+            this.registerCallBackActor(this.session);
+            sender.registerCallBackActor(this.session);
+            this.messageSender.send(msg);
+        }
+    }
+
+    /**
+     * registerCallBackActor
+     */
+    public void registerCallBackActor(byte[] session) {
+        if (this.callbackActor != null) {
+            this.actorSystem.getActorDispatcher().registerCallBackActor(session, callbackActor, ttl);
+        }
     }
 
     /**
@@ -57,19 +95,25 @@ public class ActorRef {
      */
     public static ActorRef noSender() {
         return DeadLetterActorRef.Instance;
-
     }
 
-    private static class DeadLetterActorRef extends ActorRef {
-        static final ActorRef Instance = new DeadLetterActorRef();
-
-        public DeadLetterActorRef() {
-            super("0.0.0.0", 0, UUIDUtil.getUUIDBytes(), (String) null, null);
+    private byte[] tellEncode(Object message) {
+        byte[] bytes = null;
+        if (this.tellEncoder != null) {
+            bytes = this.tellEncoder.encode(message);
+        } else if (message instanceof byte[]) {
+            bytes = (byte[]) message;
+        } else if (message instanceof Serializable) {
+            try {
+                bytes = ObjectCodecUtil.encode(message);
+            } catch (Exception e) {
+                log.error("tellEncode() error!", e);
+            }
+        } else {
+            log.error("Can not encode this obj.");
+            throw new RuntimeException("Can not encode this obj.");
         }
 
-        @Override
-        public void tell(Object message, ActorRef sender) {
-            // it is empty
-        }
+        return bytes;
     }
 }

@@ -8,4 +8,12 @@ public class MessageReceiver {
     private static final int SLOW_PROCESS_THRESHOLD = 500;
 
     private final LinkedBlockingQueue<Message> receiveQueue = null;
+
+
+    /**
+     * addMessage
+     */
+    public void addMessage(Message message) {
+
+    }
 }

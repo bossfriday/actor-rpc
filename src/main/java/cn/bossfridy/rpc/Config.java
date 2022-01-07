@@ -4,9 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class Config {
-    public static final int EACH_RECEIVE_QUEUE_SIZE = 1024 * 1024;
-    public static final int EACH_SEND_QUEUE_SIZE = 1024 * 1024;
-
     @Setter
     @Getter
     private String ip = "127.0.0.1";
@@ -26,4 +23,22 @@ public class Config {
     @Setter
     @Getter
     private boolean isSingleMode = true;
+
+    /**
+     * getSelfAddress
+     */
+    public String getSelfAddress() {
+        return getAddress(this.ip, this.port);
+    }
+
+    /**
+     * getAddress
+     *
+     * @param ip
+     * @param port
+     * @return
+     */
+    public static String getAddress(String ip, int port) {
+        return ip + ":" + port;
+    }
 }
