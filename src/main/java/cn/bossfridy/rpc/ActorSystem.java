@@ -1,20 +1,21 @@
 package cn.bossfridy.rpc;
 
 import cn.bossfridy.rpc.dispatch.ActorDispatcher;
-import cn.bossfridy.rpc.queues.MessageReceiver;
-import cn.bossfridy.rpc.queues.MessageSender;
 import cn.bossfridy.rpc.interfaces.IActorMsgDecoder;
 import cn.bossfridy.rpc.interfaces.IActorMsgEncoder;
+import cn.bossfridy.rpc.mailbox.MessageInBox;
+import cn.bossfridy.rpc.mailbox.MessageSendBox;
 import lombok.Getter;
 
 public class ActorSystem {
+
     private String name;
 
     @Getter
-    private MessageReceiver receiver;
+    private MessageInBox inBox;
 
     @Getter
-    private MessageSender sender;
+    private MessageSendBox sendBox;
 
     @Getter
     private ActorDispatcher actorDispatcher;

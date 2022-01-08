@@ -148,7 +148,7 @@ public class NettyClient {
         }
 
         try {
-            Message.buildTimestamp(message);
+            message.buildTimestamp();
             channel.writeAndFlush(message).addListener(future -> {
                 if (!future.isSuccess()) {
                     log.warn("NettyClient.process() failed, target:" + host + ":" + port);

@@ -8,13 +8,14 @@ import java.util.concurrent.*;
 
 public class ThreadPoolHelper {
     private static final ConcurrentHashMap<String, ExecutorService> threadMap = new ConcurrentHashMap<>();
+    public static final int AVAILABLE_PROCESSORS;
 
     static {
-        // todo: 加载线程配置
+        AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
     }
 
     public static ExecutorService getThreadPool(String name) {
-        return getThreadPool(name, Const.AVAILABLE_PROCESSORS);
+        return getThreadPool(name, ThreadPoolHelper.AVAILABLE_PROCESSORS);
     }
 
     public static ExecutorService getThreadPool(String name, int size) {

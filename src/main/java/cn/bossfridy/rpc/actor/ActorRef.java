@@ -2,7 +2,7 @@ package cn.bossfridy.rpc.actor;
 
 import cn.bossfridy.rpc.ActorSystem;
 import cn.bossfridy.rpc.interfaces.IActorMsgEncoder;
-import cn.bossfridy.rpc.queues.MessageSender;
+import cn.bossfridy.rpc.mailbox.MessageSendBox;
 import cn.bossfridy.rpc.transport.Message;
 import cn.bossfridy.rpc.utils.ObjectCodecUtil;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class ActorRef {
     @Getter
     private byte[] session;
 
-    private MessageSender messageSender;
+    private MessageSendBox sendBox;
     private IActorMsgEncoder tellEncoder;
     private ActorSystem actorSystem;
     private UntypedActor callbackActor;
@@ -37,7 +37,7 @@ public class ActorRef {
         this.callbackActor = callbackActor;
         this.ttl = ttl;
         if (this.actorSystem != null) {
-            this.messageSender = this.actorSystem.getSender();
+            this.sendBox = this.actorSystem.getSendBox();
             this.tellEncoder = this.actorSystem.getMsgEncoder();
         }
     }
@@ -49,7 +49,7 @@ public class ActorRef {
         this.session = session;
         this.actorSystem = actorSystem;
         if (this.actorSystem != null) {
-            this.messageSender = this.actorSystem.getSender();
+            this.sendBox = this.actorSystem.getSendBox();
             this.tellEncoder = this.actorSystem.getMsgEncoder();
         }
     }
@@ -64,7 +64,7 @@ public class ActorRef {
             return;
         }
 
-        if (this.messageSender != null) {
+        if (this.sendBox != null) {
             Message msg = new Message();
             msg.setSession(this.session);
             msg.setTargetHost(this.host);
@@ -77,7 +77,7 @@ public class ActorRef {
 
             this.registerCallBackActor(this.session);
             sender.registerCallBackActor(this.session);
-            this.messageSender.send(msg);
+            this.sendBox.put(msg);
         }
     }
 

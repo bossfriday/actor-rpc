@@ -20,10 +20,6 @@ public class Config {
     @Getter
     private long intervalOfCallbackFilter = 1000;
 
-    @Setter
-    @Getter
-    private boolean isSingleMode = true;
-
     /**
      * getSelfAddress
      */

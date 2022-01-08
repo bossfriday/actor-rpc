@@ -19,10 +19,10 @@ import static cn.bossfridy.rpc.Const.*;
 
 @Slf4j
 public class ActorDispatcher {
-    public static final ExecutorService DEFAULT_THREAD_POOL = ThreadPoolHelper.getThreadPool(THREAD_POOL_NAME_ACTORS_POOLS, AVAILABLE_PROCESSORS * 2);
+    public static final ExecutorService DEFAULT_THREAD_POOL = ThreadPoolHelper.getThreadPool(THREAD_POOL_NAME_ACTORS_POOLS, ThreadPoolHelper.AVAILABLE_PROCESSORS * 2);
 
     private static final ExecutorService dispatchThreadPool = ThreadPoolHelper.getThreadPool(THREAD_POOL_NAME_ACTORS_DISPATCH, 2);
-    private static final ExecutorService callBackThreadPool = ThreadPoolHelper.getThreadPool(THREAD_POOL_NAME_ACTORS_CALLBACK, AVAILABLE_PROCESSORS);
+    private static final ExecutorService callBackThreadPool = ThreadPoolHelper.getThreadPool(THREAD_POOL_NAME_ACTORS_CALLBACK, ThreadPoolHelper.AVAILABLE_PROCESSORS);
 
     private ConcurrentHashMap<String, IExecutor> actorMap = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, IExecutor> callbackActorMap = new ConcurrentHashMap<>();
@@ -30,19 +30,6 @@ public class ActorDispatcher {
 
     public ActorDispatcher(ActorSystem actorSystem) {
         this.actorSystem = actorSystem;
-    }
-
-    /**
-     * destroy
-     */
-    public void destroy() {
-        for (Map.Entry<String, IExecutor> entry : actorMap.entrySet()) {
-            entry.getValue().destroy();
-        }
-
-        // 不使用hashMap.clear()防止hashMap rehash不缩容导致的OOM
-        this.actorMap = new ConcurrentHashMap<>();
-        this.callbackActorMap = new ConcurrentHashMap<>();
     }
 
     /**
@@ -104,6 +91,19 @@ public class ActorDispatcher {
                 log.error("ActorDispatcher error!", e);
             }
         });
+    }
+
+    /**
+     * stop
+     */
+    public void stop() {
+        for (Map.Entry<String, IExecutor> entry : actorMap.entrySet()) {
+            entry.getValue().destroy();
+        }
+
+        // 不使用hashMap.clear()防止hashMap rehash不缩容导致的OOM
+        this.actorMap = new ConcurrentHashMap<>();
+        this.callbackActorMap = new ConcurrentHashMap<>();
     }
 
     /**

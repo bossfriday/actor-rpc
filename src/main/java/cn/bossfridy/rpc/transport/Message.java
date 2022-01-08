@@ -24,9 +24,9 @@ public class Message {
 
     private int targetPort;
 
-    private byte[] data;
+    private long timestamp;
 
-    private byte[] extra;   // timestamp
+    private byte[] data;
 
     public Message() {
         this.type = 1;
@@ -50,6 +50,17 @@ public class Message {
     }
 
     /**
+     * buildTimestamp
+     */
+    public void buildTimestamp() {
+        if (this.timestamp > 0) {
+            return;
+        }
+
+        this.timestamp = System.currentTimeMillis();
+    }
+
+    /**
      * encode
      *
      * @param msg
@@ -70,17 +81,5 @@ public class Message {
      */
     public static Message decode(ByteBuf buf, int msgTotalSize) throws Exception {
         return null;
-    }
-
-    /**
-     * buildTimestamp
-     *
-     * @param message
-     */
-    public static void buildTimestamp(Message message) {
-        if (message != null && message.getExtra() == null) {
-            byte[] extra = NumberUtil.long2Bytes(System.currentTimeMillis());
-            message.setExtra(extra);
-        }
     }
 }
