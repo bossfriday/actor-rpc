@@ -18,7 +18,15 @@ public class MessageDecoder extends ByteToMessageDecoder {
     /**
      * decode
      */
-    protected Object decode(ChannelHandlerContext ctx, ByteBuf buf) throws Exception {
-        return null;
+    protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
+        Message msg = null;
+        try {
+            msg = Message.decode(in);
+        } finally {
+            in.skipBytes(in.readableBytes());
+            ctx.close();
+        }
+
+        return msg;
     }
 }

@@ -6,11 +6,10 @@ import cn.bossfridy.rpc.interfaces.IActorMsgEncoder;
 import cn.bossfridy.rpc.mailbox.MessageInBox;
 import cn.bossfridy.rpc.mailbox.MessageSendBox;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ActorSystem {
-
-    private String name;
-
     @Getter
     private MessageInBox inBox;
 
@@ -18,7 +17,7 @@ public class ActorSystem {
     private MessageSendBox sendBox;
 
     @Getter
-    private ActorDispatcher actorDispatcher;
+    private ActorDispatcher dispatcher;
 
     @Getter
     private IActorMsgEncoder msgEncoder;
@@ -28,4 +27,7 @@ public class ActorSystem {
 
     @Getter
     private Config conf;
+
+    private String name;
+    private boolean isStarted = false;
 }

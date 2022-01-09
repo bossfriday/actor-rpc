@@ -86,7 +86,7 @@ public class ActorRef {
      */
     public void registerCallBackActor(byte[] session) {
         if (this.callbackActor != null) {
-            this.actorSystem.getActorDispatcher().registerCallBackActor(session, callbackActor, ttl);
+            this.actorSystem.getDispatcher().registerCallBackActor(session, callbackActor, ttl);
         }
     }
 
