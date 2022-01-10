@@ -17,7 +17,7 @@ public class MessageInBox extends MailBox {
     private final NettyServer server;
     private ActorDispatcher dispatcher;
 
-    public MessageInBox(int size, int port, ActorDispatcher actorDispatcher) throws Exception {
+    public MessageInBox(int size, int port, ActorDispatcher actorDispatcher) {
         super(new LinkedBlockingQueue<Message>(size));
         this.dispatcher = actorDispatcher;
         this.server = new NettyServer(port, new IMsgHandler() {

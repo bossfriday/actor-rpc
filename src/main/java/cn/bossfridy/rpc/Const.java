@@ -9,10 +9,11 @@ public class Const {
     public static final String THREAD_POOL_NAME_ACTORS_CALLBACK = "Actors_CallBack";
 
     /**
-     * dead letter actor
+     * actor
      */
     public static final String DEAD_LETTER_ACTOR_HOST = "0.0.0.0";
     public static final int DEAD_LETTER_ACTOR_PORT = 0;
+    public static final long DEFAULT_CALLBACK_ACTOR_TTL = 5000L;
 
     /**
      * queues
