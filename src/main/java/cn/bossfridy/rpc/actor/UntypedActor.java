@@ -2,7 +2,7 @@ package cn.bossfridy.rpc.actor;
 
 import cn.bossfridy.rpc.ActorSystem;
 import cn.bossfridy.rpc.transport.Message;
-import cn.bossfridy.rpc.utils.UUIDUtil;
+import cn.bossfridy.utils.UUIDUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +61,7 @@ public abstract class UntypedActor {
      */
     public void onFailed(Throwable cause) {
         if (cause != null) {
-            log.error("UntypedActor.onFailed(), msg:" + cause.getMessage());
+            log.error("UntypedActor.onFailed()", cause);
         }
     }
 

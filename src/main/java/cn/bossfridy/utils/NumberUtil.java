@@ -1,4 +1,4 @@
-package cn.bossfridy.rpc.utils;
+package cn.bossfridy.utils;
 
 public class NumberUtil {
     /**

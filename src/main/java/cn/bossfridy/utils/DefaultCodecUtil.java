@@ -1,4 +1,4 @@
-package cn.bossfridy.rpc.utils;
+package cn.bossfridy.utils;
 
 import cn.bossfridy.rpc.exception.SysException;
 
@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class ObjectCodecUtil {
+public class DefaultCodecUtil {
     /**
      * encode
      */
@@ -41,7 +41,7 @@ public class ObjectCodecUtil {
     }
 
     /**
-     * decode
+     * decode（default decode）
      */
     public static Object decode(byte[] bytes) throws SysException {
         if (bytes != null && bytes.length > 0) {

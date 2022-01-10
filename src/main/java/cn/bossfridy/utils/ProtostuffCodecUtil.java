@@ -1,4 +1,4 @@
-package cn.bossfridy.rpc.utils;
+package cn.bossfridy.utils;
 
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;
@@ -9,10 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ProtostuffUtil {
-
-    private static LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
-
+public class ProtostuffCodecUtil {
     private static Map<Class<?>, Schema<?>> schemaCache = new ConcurrentHashMap<>();
 
     /**
@@ -25,15 +22,13 @@ public class ProtostuffUtil {
     @SuppressWarnings("unchecked")
     public static <T> byte[] serialize(T obj) {
         Class<T> clazz = (Class<T>) obj.getClass();
-        Schema<T> schema = getSchema(clazz);
-        byte[] data;
+        LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
         try {
-            data = ProtostuffIOUtil.toByteArray(obj, schema, buffer);
+            Schema<T> schema = getSchema(clazz);
+            return ProtostuffIOUtil.toByteArray(obj, schema, buffer);
         } finally {
             buffer.clear();
         }
-
-        return data;
     }
 
     /**
@@ -56,7 +51,7 @@ public class ProtostuffUtil {
     private static <T> Schema<T> getSchema(Class<T> clazz) {
         Schema<T> schema = (Schema<T>) schemaCache.get(clazz);
         if (Objects.isNull(schema)) {
-            schema = RuntimeSchema.getSchema(clazz);    // 线程安全
+            schema = RuntimeSchema.getSchema(clazz);
             if (Objects.nonNull(schema)) {
                 schemaCache.put(clazz, schema);
             }

@@ -8,7 +8,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static cn.bossfridy.rpc.common.Const.EACH_SEND_QUEUE_SIZE;
+import static cn.bossfridy.common.Const.EACH_SEND_QUEUE_SIZE;
 
 @Slf4j
 public class MessageSendBox extends MailBox {

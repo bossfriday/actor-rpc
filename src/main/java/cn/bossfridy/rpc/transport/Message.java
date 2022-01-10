@@ -1,8 +1,8 @@
 package cn.bossfridy.rpc.transport;
 
-import cn.bossfridy.rpc.utils.ByteUtil;
-import cn.bossfridy.rpc.utils.UUIDUtil;
-import cn.bossfridy.rpc.utils.ByteBufUtil;
+import cn.bossfridy.utils.ByteUtil;
+import cn.bossfridy.utils.UUIDUtil;
+import cn.bossfridy.utils.ByteBufUtil;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;

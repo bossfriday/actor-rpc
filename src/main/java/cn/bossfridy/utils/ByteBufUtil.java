@@ -1,4 +1,4 @@
-package cn.bossfridy.rpc.utils;
+package cn.bossfridy.utils;
 
 import io.netty.buffer.ByteBuf;
 

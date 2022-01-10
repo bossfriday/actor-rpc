@@ -4,16 +4,15 @@ import cn.bossfridy.rpc.ActorSystem;
 import cn.bossfridy.rpc.interfaces.IActorMsgEncoder;
 import cn.bossfridy.rpc.mailbox.MessageSendBox;
 import cn.bossfridy.rpc.transport.Message;
-import cn.bossfridy.rpc.utils.ObjectCodecUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.Serializable;
 
 @Slf4j
 public class ActorRef {
     private String host;
     private int port;
+
+    @Getter
     private String method;
 
     @Getter
@@ -57,11 +56,9 @@ public class ActorRef {
     /**
      * tell
      */
-    public void tell(Object message, ActorRef sender) {
+    public void tell(Object message, ActorRef sender) throws Exception {
         if (sender == null) {
-            log.info("Can not specify sender when tell.");
-
-            return;
+            throw new Exception("sender is null!");
         }
 
         if (this.sendBox != null) {
@@ -73,7 +70,7 @@ public class ActorRef {
             msg.setSourceHost(sender.host);
             msg.setSourcePort(sender.port);
             msg.setSourceMethod(sender.method);
-            msg.setData(tellEncode(message));
+            msg.setData(this.tellEncoder.encode(message));
 
             this.registerCallBackActor(this.session);
             sender.registerCallBackActor(this.session);
@@ -95,25 +92,5 @@ public class ActorRef {
      */
     public static ActorRef noSender() {
         return DeadLetterActorRef.Instance;
-    }
-
-    private byte[] tellEncode(Object message) {
-        byte[] bytes = null;
-        if (this.tellEncoder != null) {
-            bytes = this.tellEncoder.encode(message);
-        } else if (message instanceof byte[]) {
-            bytes = (byte[]) message;
-        } else if (message instanceof Serializable) {
-            try {
-                bytes = ObjectCodecUtil.encode(message);
-            } catch (Exception e) {
-                log.error("tellEncode() error!", e);
-            }
-        } else {
-            log.error("Can not encode this obj.");
-            throw new RuntimeException("Can not encode this obj.");
-        }
-
-        return bytes;
     }
 }

@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static cn.bossfridy.rpc.common.Const.SLOW_QUEUE_THRESHOLD;
+import static cn.bossfridy.common.Const.SLOW_QUEUE_THRESHOLD;
 
 @Slf4j
 public class MessageInBox extends MailBox {
@@ -43,9 +43,11 @@ public class MessageInBox extends MailBox {
 
     @Override
     public void process(Message msg) throws Exception {
-        long currentTimestamp = System.currentTimeMillis();
-        if (currentTimestamp - msg.getTimestamp() > SLOW_QUEUE_THRESHOLD) {
-            log.warn("slow rpc, " + currentTimestamp + " - " + msg.getTimestamp() + " > " + SLOW_QUEUE_THRESHOLD);
+        if (msg.getTimestamp() > 0) {
+            long currentTimestamp = System.currentTimeMillis();
+            if (currentTimestamp - msg.getTimestamp() > SLOW_QUEUE_THRESHOLD) {
+                log.warn("slow rpc, " + currentTimestamp + " - " + msg.getTimestamp() + " > " + SLOW_QUEUE_THRESHOLD);
+            }
         }
 
         this.dispatcher.dispatch(msg);

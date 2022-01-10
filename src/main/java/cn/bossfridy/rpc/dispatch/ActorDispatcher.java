@@ -5,7 +5,7 @@ import cn.bossfridy.rpc.actor.UntypedActor;
 import cn.bossfridy.rpc.interfaces.IExecutor;
 import cn.bossfridy.rpc.thread.ThreadPoolHelper;
 import cn.bossfridy.rpc.transport.Message;
-import cn.bossfridy.rpc.utils.UUIDUtil;
+import cn.bossfridy.utils.UUIDUtil;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static cn.bossfridy.rpc.common.Const.*;
+import static cn.bossfridy.common.Const.*;
 
 @Slf4j
 public class ActorDispatcher {
