@@ -28,8 +28,8 @@ public class CallBackActorExecutor implements IExecutor {
     /**
      * onTimeout
      */
-    public void onTimeout() {
-        this.actor.onTimeout();
+    public void onTimeout(String actorKey) {
+        this.actor.onTimeout(actorKey);
     }
 
     @Override

@@ -23,11 +23,6 @@ public abstract class UntypedActor {
     public abstract void onReceive(Object msg) throws Exception;
 
     /**
-     * onTimeout
-     */
-    public abstract void onTimeout();
-
-    /**
      * onReceive
      */
     public void onReceive(Message message, ActorSystem actorSystem) throws Exception {
@@ -46,7 +41,7 @@ public abstract class UntypedActor {
                 sender = new ActorRef(message.getSourceHost(), message.getSourcePort(), message.getSession(), actorSystem, null, 0);
             } else {
                 sender = new ActorRef(message.getSourceHost(), message.getSourcePort(), message.getSession(), message.getSourceMethod(), actorSystem);
-                self = new ActorRef(actorSystem.getConf().getIp(), actorSystem.getConf().getPort(), UUIDUtil.getUUIDBytes(), message.getTargetMethod(), actorSystem);
+                self = new ActorRef(actorSystem.getSelfAddress().getHostName(), actorSystem.getSelfAddress().getPort(), UUIDUtil.getUUIDBytes(), message.getTargetMethod(), actorSystem);
             }
         }
 
@@ -68,6 +63,13 @@ public abstract class UntypedActor {
         if (cause != null) {
             log.error("UntypedActor.onFailed(), msg:" + cause.getMessage());
         }
+    }
+
+    /**
+     * onTimeout
+     */
+    public void onTimeout(String actorKey) {
+        log.warn("actor timeout, actorKey:" + actorKey);
     }
 
     /**

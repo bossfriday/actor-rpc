@@ -15,15 +15,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Constructor;
+import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 
-import static cn.bossfridy.rpc.Const.DEFAULT_CALLBACK_ACTOR_TTL;
-import static cn.bossfridy.rpc.Const.EACH_RECEIVE_QUEUE_SIZE;
+import static cn.bossfridy.rpc.common.Const.DEFAULT_CALLBACK_ACTOR_TTL;
+import static cn.bossfridy.rpc.common.Const.EACH_RECEIVE_QUEUE_SIZE;
 
 @Slf4j
 public class ActorSystem {
     @Getter
-    private String name;
+    private String systemName;
+
+    @Getter
+    private InetSocketAddress selfAddress;
 
     @Getter
     private MessageInBox inBox;
@@ -43,24 +47,21 @@ public class ActorSystem {
     private IActorMsgDecoder msgDecoder;
 
     @Getter
-    private Config conf;
-
-    @Getter
     private boolean isStarted = false;
 
-    private ActorSystem(String name, Config conf) {
-        this.name = name;
-        this.conf = conf;
+    private ActorSystem(String systemName, InetSocketAddress selfAddress) {
+        this.systemName = systemName;
+        this.selfAddress = selfAddress;
         this.dispatcher = new ActorDispatcher(this);
-        this.inBox = new MessageInBox(EACH_RECEIVE_QUEUE_SIZE, conf.getPort(), this.dispatcher);
-        this.sendBox = new MessageSendBox(inBox, conf);
+        this.inBox = new MessageInBox(EACH_RECEIVE_QUEUE_SIZE, selfAddress.getPort(), this.dispatcher);
+        this.sendBox = new MessageSendBox(inBox, selfAddress);
     }
 
     /**
      * create
      */
-    public static ActorSystem create(String name, Config conf) {
-        return new ActorSystem(name, conf);
+    public static ActorSystem create(String systemName, InetSocketAddress selfAddress) {
+        return new ActorSystem(systemName, selfAddress);
     }
 
     /**
@@ -126,7 +127,7 @@ public class ActorSystem {
     }
 
     public ActorRef actorOf(final long ttl, final UntypedActor actor) {
-        return new ActorRef(this.conf.getIp(), this.conf.getPort(), UUIDUtil.getUUIDBytes(), this, actor, ttl);
+        return new ActorRef(this.selfAddress.getHostName(), this.selfAddress.getPort(), UUIDUtil.getUUIDBytes(), this, actor, ttl);
     }
 
     public ActorRef actorOf(Class<? extends UntypedActor> cls, Object... args) {
@@ -152,6 +153,6 @@ public class ActorSystem {
     }
 
     public ActorRef actorOf(byte[] session, String targetMethod) {
-        return actorOf(conf.getIp(), conf.getPort(), session, targetMethod);
+        return actorOf(selfAddress.getHostName(), selfAddress.getPort(), session, targetMethod);
     }
 }

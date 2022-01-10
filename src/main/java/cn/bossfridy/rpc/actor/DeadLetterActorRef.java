@@ -2,8 +2,8 @@ package cn.bossfridy.rpc.actor;
 
 import cn.bossfridy.rpc.utils.UUIDUtil;
 
-import static cn.bossfridy.rpc.Const.DEAD_LETTER_ACTOR_HOST;
-import static cn.bossfridy.rpc.Const.DEAD_LETTER_ACTOR_PORT;
+import static cn.bossfridy.rpc.common.Const.DEAD_LETTER_ACTOR_HOST;
+import static cn.bossfridy.rpc.common.Const.DEAD_LETTER_ACTOR_PORT;
 
 public class DeadLetterActorRef extends ActorRef {
     public static final ActorRef Instance = new DeadLetterActorRef();

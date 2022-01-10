@@ -1,4 +1,4 @@
-package cn.bossfridy.rpc;
+package cn.bossfridy.rpc.common;
 
 public class Const {
     /**

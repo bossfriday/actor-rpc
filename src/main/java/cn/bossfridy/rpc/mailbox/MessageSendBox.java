@@ -1,36 +1,35 @@
 package cn.bossfridy.rpc.mailbox;
 
-import cn.bossfridy.rpc.Config;
 import cn.bossfridy.rpc.transport.Message;
 import cn.bossfridy.rpc.transport.NettyClient;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static cn.bossfridy.rpc.Const.EACH_SEND_QUEUE_SIZE;
+import static cn.bossfridy.rpc.common.Const.EACH_SEND_QUEUE_SIZE;
 
 @Slf4j
 public class MessageSendBox extends MailBox {
     private MessageInBox inBox;
-    private Config conf;
-    private ConcurrentHashMap<String, NettyClient> clientMap = new ConcurrentHashMap<String, NettyClient>();    // key:nodeAddress
+    private InetSocketAddress selfAddress;
+    private ConcurrentHashMap<InetSocketAddress, NettyClient> clientMap = new ConcurrentHashMap<InetSocketAddress, NettyClient>();
 
-    public MessageSendBox(MessageInBox inBox, Config conf) {
+    public MessageSendBox(MessageInBox inBox, InetSocketAddress selfAddress) {
         super(new LinkedBlockingQueue<Message>(EACH_SEND_QUEUE_SIZE));
 
         this.inBox = inBox;
-        this.conf = conf;
+        this.selfAddress = selfAddress;
     }
 
     @Override
     public void process(Message msg) throws Exception {
         if (msg != null) {
-            String selfAddress = conf.getSelfAddress();
-            String targetAddress = Config.getAddress(msg.getTargetHost(), msg.getTargetPort());
+            InetSocketAddress targetAddress = new InetSocketAddress(msg.getTargetHost(), msg.getTargetPort());
 
             // 本机通讯：不走网络（直接入接收队列）
-            if (selfAddress.equalsIgnoreCase(targetAddress)) {
+            if (selfAddress.equals(targetAddress)) {
                 inBox.put(msg);
 
                 return;
@@ -52,12 +51,12 @@ public class MessageSendBox extends MailBox {
             super.isStart = false;
             super.queue.clear();
 
-            for (String key : clientMap.keySet()) {
+            for (InetSocketAddress key : clientMap.keySet()) {
                 NettyClient client = clientMap.get(key);
                 client.close();
             }
 
-            clientMap = new ConcurrentHashMap<String, NettyClient>();
+            clientMap = new ConcurrentHashMap<InetSocketAddress, NettyClient>();
         } catch (Exception e) {
             log.error("MessageSendBox.stop() error!", e);
         }

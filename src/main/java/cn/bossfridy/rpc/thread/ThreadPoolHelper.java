@@ -1,6 +1,5 @@
 package cn.bossfridy.rpc.thread;
 
-import cn.bossfridy.rpc.Const;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang.StringUtils;
 
