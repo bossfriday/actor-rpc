@@ -95,8 +95,6 @@ public class NettyClient {
     public void send(Message message) {
         switch (connState.get()) {
             case CLOSE:
-                log.warn("ignore send message, connState:CLOSE");
-                break;
             case CONNECTING:
                 connect();
                 insertToQueue(message);
@@ -135,7 +133,7 @@ public class NettyClient {
 
     private void insertToQueue(Message message) {
         if (sendQueue.size() == QUEUE_FIX_SIZE)
-            log.warn("The sendQueue is full and discard an old msg, session:=" + message.getSessionShortString());
+            log.warn("The sendQueue is full and discard an old msg, session:=" + message.getSessionString());
 
         sendQueue.offer(message);
     }
@@ -151,7 +149,7 @@ public class NettyClient {
             message.buildTimestamp();
             channel.writeAndFlush(message).addListener(future -> {
                 if (!future.isSuccess()) {
-                    log.warn("NettyClient.process() failed, target:" + host + ":" + port);
+                    log.error("NettyClient.write() error, target:" + host + ":" + port, future.cause());
                 }
             });
         } catch (Exception e) {

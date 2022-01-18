@@ -1,26 +1,23 @@
 package cn.bossfridy.rpc.transport;
 
-import cn.bossfridy.utils.ByteUtil;
 import cn.bossfridy.utils.UUIDUtil;
-import cn.bossfridy.utils.ByteBufUtil;
-import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 
 @Data
 public class Message {
     /**
-     * sessionId（可启XI的作用，16字节）
+     * sessionId（16字节，类比XI）
      **/
     private byte[] session;
 
     /**
-     * 目标方法（最大长度：MAX_VALUE_UNSIGNED_INT8）
+     * 目标方法（最大长度：1字节无符号数字）
      **/
     private String targetMethod;
 
     /**
-     * 源方法（最大长度：MAX_VALUE_UNSIGNED_INT8）
+     * 源方法（最大长度：1字节无符号数字）
      **/
     private String sourceMethod;
 
@@ -55,7 +52,7 @@ public class Message {
     private byte version;
 
     /**
-     * 消息体（protostuff序列化，最大长度：MAX_VALUE_UNSIGNED_INT24）
+     * 消息体（protostuff序列化，最大长度：3字节无符号数字）
      **/
     private byte[] data;
 
@@ -64,9 +61,9 @@ public class Message {
     }
 
     /**
-     * getSessionShortString
+     * getSessionString
      */
-    public String getSessionShortString() {
+    public String getSessionString() {
         if (this.session == null || this.session.length == 0)
             throw new RuntimeException("Message.session is null or empty!");
 
@@ -89,52 +86,5 @@ public class Message {
         }
 
         this.timestamp = System.currentTimeMillis();
-    }
-
-    /**
-     * encode
-     */
-    public static void encode(Message msg, ByteBuf out) throws Exception {
-        out.writeBytes(msg.getSession());
-        ByteBufUtil.writeString(msg.getTargetMethod(), out);
-        ByteBufUtil.writeString(msg.getSourceMethod(), out);
-        out.writeBytes(ByteUtil.ipToBytes(msg.getSourceHost()));
-        out.writeBytes(ByteUtil.ipToBytes(msg.getTargetHost()));
-        out.writeInt(msg.getSourcePort());
-        out.writeInt(msg.getTargetPort());
-        out.writeLong(msg.getTimestamp());
-        out.writeByte(msg.getVersion());
-        ByteBufUtil.writeData(msg.getData(), out);
-    }
-
-    /**
-     * decode
-     */
-    public static Message decode(ByteBuf in) throws Exception {
-        Message msg = new Message();
-
-        byte[] sessionBytes = new byte[16];
-        in.readBytes(sessionBytes);
-        msg.setSession(sessionBytes);
-
-        msg.setTargetMethod(ByteBufUtil.readString(in));
-        msg.setSourceMethod(ByteBufUtil.readString(in));
-
-        byte[] sourceHostBytes = new byte[4];
-        in.readBytes(sourceHostBytes);
-        msg.setSourceHost(ByteUtil.bytesToIp(sourceHostBytes));
-
-        byte[] targetHostBytes = new byte[4];
-        in.readBytes(targetHostBytes);
-        msg.setTargetHost(ByteUtil.bytesToIp(targetHostBytes));
-
-        msg.setSourcePort(in.readInt());
-        msg.setTargetPort(in.readInt());
-        msg.setTimestamp(in.readLong());
-        msg.setVersion(in.readByte());
-
-        msg.setData(ByteBufUtil.readData(in));
-
-        return msg;
     }
 }

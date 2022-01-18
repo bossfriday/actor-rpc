@@ -6,7 +6,6 @@ import cn.bossfridy.rpc.interfaces.IActorMsgDecoder;
 import cn.bossfridy.rpc.interfaces.IActorMsgEncoder;
 import cn.bossfridy.rpc.test.actorsystem.actors.Actor1;
 import cn.bossfridy.rpc.test.actorsystem.actors.Actor2;
-import cn.bossfridy.utils.ProtostuffCodecUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

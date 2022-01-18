@@ -10,9 +10,13 @@ public class Bootstrap {
     public static void main(String[] args) throws Exception {
         BarCluster.getInstance().start();
 
-        for(int i=0;i<100;i++) {
-            onRequestReceived(Foo.builder().id(String.valueOf(i)).name("foo" + i).age(i).desc("Foo is a fuck oriented object!").build());
+        long begin = System.currentTimeMillis();
+        for(int i=0;i<10;i++) {
+            Foo foo = Foo.builder().id(String.valueOf(i)).name("foo" + i).age(i).desc("Foo is a fuck oriented object!").build();
+            onRequestReceived(foo);
+
         }
+        System.out.println("takeUpTime:"+(System.currentTimeMillis() - begin));
     }
 
     /**
