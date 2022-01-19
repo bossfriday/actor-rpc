@@ -3,7 +3,7 @@
 * 使用protostuff序列化（.proto文件编写恶心，与Protocol Buffer性能几乎接近），同时支持Java内置Serializable；
 * 使用Netty进行通讯（本机通讯不走网络，直接入收件箱队列）；
 * 使用ZK进行集群状态管理；
-* 使用method+resourceId进行一致性哈希路由，同时支持随机路由；
+* 二级路由：数据中心路由+ 数据中心内路由。数据中心内使用method+resourceId进行一致性哈希路由，同时支持随机路由、强制路由方式；
 * RpcMessage数据结构：
 ```
     /**
