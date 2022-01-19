@@ -5,7 +5,8 @@
 * 使用ZK进行集群状态管理；
 * 使用method+resourceId进行一致性哈希路由，同时支持随机路由；
 * RpcMessage数据结构：
-	/**
+```
+    /**
      * sessionId（16字节，类比XI）
      **/
     private byte[] session;
@@ -54,7 +55,7 @@
      * 消息体（protostuff序列化，最大长度：3字节无符号数字）
      **/
     private byte[] payloadData;
-
+```
 
 # 1. 背景
 随着业务的发展，现代分布式系统对于垂直扩展、水平扩展、容错性的要求越来越高。常见的一些编程模式已经不能很好的解决这些问题。  
