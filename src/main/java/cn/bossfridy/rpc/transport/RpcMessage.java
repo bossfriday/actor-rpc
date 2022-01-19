@@ -5,7 +5,7 @@ import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 
 @Data
-public class Message {
+public class RpcMessage {
     /**
      * sessionId（16字节，类比XI）
      **/
@@ -54,9 +54,9 @@ public class Message {
     /**
      * 消息体（protostuff序列化，最大长度：3字节无符号数字）
      **/
-    private byte[] data;
+    private byte[] payloadData;
 
-    public Message() {
+    public RpcMessage() {
         this.version = (byte) 1;
     }
 

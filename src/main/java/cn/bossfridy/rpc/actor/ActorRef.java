@@ -3,7 +3,7 @@ package cn.bossfridy.rpc.actor;
 import cn.bossfridy.rpc.ActorSystem;
 import cn.bossfridy.rpc.interfaces.IActorMsgEncoder;
 import cn.bossfridy.rpc.mailbox.MessageSendBox;
-import cn.bossfridy.rpc.transport.Message;
+import cn.bossfridy.rpc.transport.RpcMessage;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,7 +62,7 @@ public class ActorRef {
         }
 
         if (this.sendBox != null) {
-            Message msg = new Message();
+            RpcMessage msg = new RpcMessage();
             msg.setSession(this.session);
             msg.setTargetHost(this.host);
             msg.setTargetPort(this.port);
@@ -70,7 +70,7 @@ public class ActorRef {
             msg.setSourceHost(sender.host);
             msg.setSourcePort(sender.port);
             msg.setSourceMethod(sender.method);
-            msg.setData(this.tellEncoder.encode(message));
+            msg.setPayloadData(this.tellEncoder.encode(message));
 
             this.registerCallBackActor(this.session);
             sender.registerCallBackActor(this.session);

@@ -14,7 +14,6 @@ public class Bootstrap {
         for(int i=0;i<10;i++) {
             Foo foo = Foo.builder().id(String.valueOf(i)).name("foo" + i).age(i).desc("Foo is a fuck oriented object!").build();
             onRequestReceived(foo);
-
         }
         System.out.println("takeUpTime:"+(System.currentTimeMillis() - begin));
     }

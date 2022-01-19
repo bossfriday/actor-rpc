@@ -6,7 +6,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 
 import java.util.List;
 
-public class MessageDecoder extends ByteToMessageDecoder {
+public class RpcDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         if (in.readableBytes() < 4) {
@@ -22,7 +22,7 @@ public class MessageDecoder extends ByteToMessageDecoder {
 
         byte[] data = new byte[dataLength];
         in.readBytes(data);
-        Object obj = MessageCodec.deserialize(data);
+        Object obj = RpcMessageCodec.deserialize(data);
         out.add(obj);
     }
 }

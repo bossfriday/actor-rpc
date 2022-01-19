@@ -4,7 +4,7 @@ import cn.bossfridy.rpc.interfaces.IMsgHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
+public class NettyServerHandler extends SimpleChannelInboundHandler<RpcMessage> {
     private IMsgHandler handler;
 
     public NettyServerHandler(IMsgHandler handler) {
@@ -12,7 +12,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, RpcMessage msg) throws Exception {
         this.handler.msgHandle(msg);
     }
 

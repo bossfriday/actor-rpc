@@ -1,7 +1,7 @@
 package cn.bossfridy.rpc.actor;
 
 import cn.bossfridy.rpc.ActorSystem;
-import cn.bossfridy.rpc.transport.Message;
+import cn.bossfridy.rpc.transport.RpcMessage;
 import cn.bossfridy.utils.UUIDUtil;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +25,7 @@ public abstract class UntypedActor {
     /**
      * onReceive
      */
-    public void onReceive(Message message, ActorSystem actorSystem) throws Exception {
+    public void onReceive(RpcMessage message, ActorSystem actorSystem) throws Exception {
         if (message == null || actorSystem == null) {
             log.warn("UntypedActor.onReceive(msg, actorSystem) returned by msg or actorSystem is null!");
 
@@ -49,7 +49,7 @@ public abstract class UntypedActor {
         this.setSelf(self);
 
         try {
-            Object msgObj = actorSystem.getMsgDecoder().decode(message.getData());
+            Object msgObj = actorSystem.getMsgDecoder().decode(message.getPayloadData());
             this.onReceive(msgObj);
         } catch (Throwable e) {
             this.onFailed(e);

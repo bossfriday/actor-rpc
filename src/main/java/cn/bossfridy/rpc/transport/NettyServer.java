@@ -30,8 +30,8 @@ public class NettyServer implements IServer {
 
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new MessageDecoder());
-                        ch.pipeline().addLast(new MessageEncoder());
+                        ch.pipeline().addLast(new RpcDecoder());
+                        ch.pipeline().addLast(new RpcEncoder());
                         ch.pipeline().addLast(new NettyServerHandler(msgHandler));
                     }
 

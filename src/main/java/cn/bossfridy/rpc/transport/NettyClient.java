@@ -9,12 +9,14 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 public class NettyClient {
     private static final int QUEUE_FIX_SIZE = 10000;
     private static final int CONNECT_TIMEOUT_MILLIS = 10000;
+    private static final int RECONNECT_DELAY_SECOND = 5;
 
     private Bootstrap bootstrap;
     private EventLoopGroup group;
@@ -22,9 +24,8 @@ public class NettyClient {
 
     private String host;
     private int port;
-    private long connInitTime;
 
-    private final EvictingQueue<Message> sendQueue; // 使用有限队列防止异常下OOM
+    private final EvictingQueue<RpcMessage> sendQueue; // 使用有限队列防止异常下OOM
     private AtomicReference<ConnStatus> connState;
 
     public NettyClient(String host, int port) {
@@ -43,7 +44,7 @@ public class NettyClient {
         }
 
         connState.set(ConnStatus.CONNECTING);
-        connInitTime = System.currentTimeMillis();
+        NettyClient client = this;
         bootstrap = new Bootstrap();
         group = new NioEventLoopGroup();
         bootstrap.group(group)
@@ -53,30 +54,31 @@ public class NettyClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new MessageDecoder())
-                                .addLast(new MessageEncoder())
+                        ch.pipeline().addLast(new RpcDecoder())
+                                .addLast(new RpcEncoder())
                                 .addLast(new WriteTimeoutHandler(300))
-                                .addLast(new NettyClientHandler());
+                                .addLast(new NettyClientHandler(client));
                     }
                 });
 
         ChannelFuture future = this.bootstrap.connect(this.host, this.port);
-        future.addListener((ChannelFutureListener) f -> {
-            if (!f.isSuccess()) {
-                log.warn("NettyClient.connect() failed, target:" + host + ":" + port);
-
+        future.addListener((ChannelFutureListener) channelFuture -> {
+            if (!channelFuture.isSuccess()) {
+                log.warn("NettyClient.connect() failed, prepare to reconnect, target:" + host + ":" + port);
                 connState.set(ConnStatus.CLOSE);
-                long duration = System.currentTimeMillis() - connInitTime;
-                if (duration < 5000) {
-                    Thread.currentThread().sleep(3000); // 避免对端断线后不断重连导致cpu负载高
-                }
+                final EventLoop loop = channelFuture.channel().eventLoop();
+                loop.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        connect();
+                    }
+                }, RECONNECT_DELAY_SECOND, TimeUnit.SECONDS);  // 避免对端断线后不停重连导致cpu高
 
-                connect();
                 return;
             }
 
             log.info("NettyClient.connect() success, target:" + host + ":" + port);
-            this.channel = f.channel();
+            this.channel = channelFuture.channel();
             connState.set(ConnStatus.CONNECTED);
 
             // add close listener
@@ -92,7 +94,7 @@ public class NettyClient {
     /**
      * send
      */
-    public void send(Message message) {
+    public void send(RpcMessage message) {
         switch (connState.get()) {
             case CLOSE:
             case CONNECTING:
@@ -125,20 +127,20 @@ public class NettyClient {
             return;
         }
 
-        Message message;
+        RpcMessage message;
         while ((message = sendQueue.poll()) != null) {
             write(message);
         }
     }
 
-    private void insertToQueue(Message message) {
+    private void insertToQueue(RpcMessage message) {
         if (sendQueue.size() == QUEUE_FIX_SIZE)
             log.warn("The sendQueue is full and discard an old msg, session:=" + message.getSessionString());
 
         sendQueue.offer(message);
     }
 
-    private void write(Message message) {
+    private void write(RpcMessage message) {
         if (!channel.isActive()) {
             connState.set(ConnStatus.CLOSE);
             insertToQueue(message);

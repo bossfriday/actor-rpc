@@ -1,6 +1,6 @@
 package cn.bossfridy.rpc.interfaces;
 
-import cn.bossfridy.rpc.transport.Message;
+import cn.bossfridy.rpc.transport.RpcMessage;
 
 public interface IMsgHandler {
     /**
@@ -8,5 +8,5 @@ public interface IMsgHandler {
      *
      * @param msg
      */
-    void msgHandle(Message msg);
+    void msgHandle(RpcMessage msg);
 }

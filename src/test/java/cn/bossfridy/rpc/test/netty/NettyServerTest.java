@@ -2,7 +2,7 @@ package cn.bossfridy.rpc.test.netty;
 
 import cn.bossfridy.rpc.interfaces.IMsgHandler;
 import cn.bossfridy.rpc.interfaces.IServer;
-import cn.bossfridy.rpc.transport.Message;
+import cn.bossfridy.rpc.transport.RpcMessage;
 import cn.bossfridy.rpc.transport.NettyServer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -18,7 +18,7 @@ public class NettyServerTest {
         EventLoopGroup worker = new NioEventLoopGroup();
         IServer server = new NettyServer(8090, new IMsgHandler() {
             @Override
-            public void msgHandle(Message msg) {
+            public void msgHandle(RpcMessage msg) {
                 System.out.println("server received a msg :" + msg.toString());
             }
         });

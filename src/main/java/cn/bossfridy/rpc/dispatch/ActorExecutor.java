@@ -4,7 +4,7 @@ import cn.bossfridy.rpc.ActorSystem;
 import cn.bossfridy.rpc.actor.pool.ActorPool;
 import cn.bossfridy.rpc.actor.UntypedActor;
 import cn.bossfridy.rpc.interfaces.IExecutor;
-import cn.bossfridy.rpc.transport.Message;
+import cn.bossfridy.rpc.transport.RpcMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
@@ -41,7 +41,7 @@ public class ActorExecutor implements IExecutor {
     }
 
     @Override
-    public void process(Message message, ActorSystem actorSystem) {
+    public void process(RpcMessage message, ActorSystem actorSystem) {
         this.processThreadPool.execute(() -> {
             UntypedActor actor = null;
             try {

@@ -1,6 +1,6 @@
 package cn.bossfridy.rpc.mailbox;
 
-import cn.bossfridy.rpc.transport.Message;
+import cn.bossfridy.rpc.transport.RpcMessage;
 import cn.bossfridy.rpc.transport.NettyClient;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,14 +17,14 @@ public class MessageSendBox extends MailBox {
     private ConcurrentHashMap<InetSocketAddress, NettyClient> clientMap = new ConcurrentHashMap<InetSocketAddress, NettyClient>();
 
     public MessageSendBox(MessageInBox inBox, InetSocketAddress selfAddress) {
-        super(new LinkedBlockingQueue<Message>(EACH_SEND_QUEUE_SIZE));
+        super(new LinkedBlockingQueue<RpcMessage>(EACH_SEND_QUEUE_SIZE));
 
         this.inBox = inBox;
         this.selfAddress = selfAddress;
     }
 
     @Override
-    public void process(Message msg) throws Exception {
+    public void process(RpcMessage msg) throws Exception {
         if (msg != null) {
             InetSocketAddress targetAddress = new InetSocketAddress(msg.getTargetHost(), msg.getTargetPort());
 

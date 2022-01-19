@@ -2,7 +2,7 @@ package cn.bossfridy.rpc.mailbox;
 
 import cn.bossfridy.rpc.dispatch.ActorDispatcher;
 import cn.bossfridy.rpc.interfaces.IMsgHandler;
-import cn.bossfridy.rpc.transport.Message;
+import cn.bossfridy.rpc.transport.RpcMessage;
 import cn.bossfridy.rpc.transport.NettyServer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -18,11 +18,11 @@ public class MessageInBox extends MailBox {
     private ActorDispatcher dispatcher;
 
     public MessageInBox(int size, int port, ActorDispatcher actorDispatcher) {
-        super(new LinkedBlockingQueue<Message>(size));
+        super(new LinkedBlockingQueue<RpcMessage>(size));
         this.dispatcher = actorDispatcher;
         this.server = new NettyServer(port, new IMsgHandler() {
             @Override
-            public void msgHandle(Message msg) {
+            public void msgHandle(RpcMessage msg) {
                 MessageInBox.super.put(msg);
             }
         });
@@ -42,7 +42,7 @@ public class MessageInBox extends MailBox {
     }
 
     @Override
-    public void process(Message msg) throws Exception {
+    public void process(RpcMessage msg) throws Exception {
         if (msg.getTimestamp() > 0) {
             long currentTimestamp = System.currentTimeMillis();
             if (currentTimestamp - msg.getTimestamp() > SLOW_QUEUE_THRESHOLD) {

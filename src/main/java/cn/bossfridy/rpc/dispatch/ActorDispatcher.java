@@ -4,7 +4,7 @@ import cn.bossfridy.rpc.ActorSystem;
 import cn.bossfridy.rpc.actor.UntypedActor;
 import cn.bossfridy.rpc.interfaces.IExecutor;
 import cn.bossfridy.rpc.thread.ThreadPoolHelper;
-import cn.bossfridy.rpc.transport.Message;
+import cn.bossfridy.rpc.transport.RpcMessage;
 import cn.bossfridy.utils.UUIDUtil;
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
@@ -65,7 +65,7 @@ public class ActorDispatcher {
     /**
      * dispatch
      */
-    public void dispatch(Message message) {
+    public void dispatch(RpcMessage message) {
         if (message == null)
             return;
 

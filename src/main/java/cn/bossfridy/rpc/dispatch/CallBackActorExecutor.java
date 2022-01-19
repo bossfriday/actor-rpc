@@ -3,7 +3,7 @@ package cn.bossfridy.rpc.dispatch;
 import cn.bossfridy.rpc.ActorSystem;
 import cn.bossfridy.rpc.actor.UntypedActor;
 import cn.bossfridy.rpc.interfaces.IExecutor;
-import cn.bossfridy.rpc.transport.Message;
+import cn.bossfridy.rpc.transport.RpcMessage;
 
 import java.util.concurrent.ExecutorService;
 
@@ -33,7 +33,7 @@ public class CallBackActorExecutor implements IExecutor {
     }
 
     @Override
-    public void process(Message message, ActorSystem actorSystem) {
+    public void process(RpcMessage message, ActorSystem actorSystem) {
         if (this.actor != null) {
             callBackThreadPool.submit(() -> {
                 try {

@@ -13,7 +13,7 @@ import java.io.DataOutputStream;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
-public class MessageCodec {
+public class RpcMessageCodec {
     private static final String CHARSET = "UTF-8";
     private static final int MAX_VALUE_UNSIGNED_INT8 = 255;
     private static final int MAX_VALUE_UNSIGNED_INT16 = 65535;
@@ -22,7 +22,7 @@ public class MessageCodec {
     /**
      * serialize
      */
-    public static byte[] serialize(Message msg) throws Exception {
+    public static byte[] serialize(RpcMessage msg) throws Exception {
         ByteArrayOutputStream bos = null;
         DataOutputStream out = null;
         try {
@@ -38,7 +38,7 @@ public class MessageCodec {
             out.writeInt(msg.getTargetPort());
             out.writeLong(msg.getTimestamp());
             out.writeByte(msg.getVersion());
-            writeData(out, msg.getData());
+            writePayloadData(out, msg.getPayloadData());
 
             return bos.toByteArray();
         } finally {
@@ -58,13 +58,13 @@ public class MessageCodec {
     /**
      * deserialize
      */
-    public static Message deserialize(byte[] data) throws Exception {
+    public static RpcMessage deserialize(byte[] data) throws Exception {
         ByteArrayInputStream bis = null;
         DataInputStream in = null;
         try {
             bis = new ByteArrayInputStream(data);
             in = new DataInputStream(bis);
-            Message msg = new Message();
+            RpcMessage msg = new RpcMessage();
 
             byte[] sessionBytes = new byte[16];
             in.readFully(sessionBytes);
@@ -85,7 +85,7 @@ public class MessageCodec {
             msg.setTargetPort(in.readInt());
             msg.setTimestamp(in.readLong());
             msg.setVersion(in.readByte());
-            msg.setData(readData(in));
+            msg.setPayloadData(readPayloadData(in));
 
             return msg;
         } finally {
@@ -187,13 +187,13 @@ public class MessageCodec {
     }
 
     /**
-     * writeData
+     * writePayloadData
      *
      * @param out
      * @param data
      * @throws Exception
      */
-    private static void writeData(DataOutputStream out, byte[] data) throws Exception {
+    private static void writePayloadData(DataOutputStream out, byte[] data) throws Exception {
         if (data == null || data.length == 0) {
             out.writeByte((byte) 0);
             return;
@@ -208,13 +208,13 @@ public class MessageCodec {
     }
 
     /**
-     * readData
+     * readPayloadData
      *
      * @param in
      * @return
      * @throws Exception
      */
-    private static byte[] readData(DataInputStream in) throws Exception {
+    private static byte[] readPayloadData(DataInputStream in) throws Exception {
         byte[] lenBytes = new byte[3];
         in.readFully(lenBytes);
         int length = bytesToUnsignedInt24(lenBytes);
@@ -230,7 +230,7 @@ public class MessageCodec {
     }
 
     public static void main(String[] args) throws Exception {
-        Message msg = new Message();
+        RpcMessage msg = new RpcMessage();
         msg.setSession(UUIDUtil.getUUIDBytes());
         msg.setTargetMethod("targetMethod");
         msg.setSourceMethod("sourceMethod");
@@ -239,9 +239,9 @@ public class MessageCodec {
         msg.setSourcePort(8081);
         msg.setTargetPort(8082);
         msg.setTimestamp(System.currentTimeMillis());
-        msg.setData("hello".getBytes(StandardCharsets.UTF_8));
+        msg.setPayloadData("hello".getBytes(StandardCharsets.UTF_8));
 
         System.out.println(msg.toString());
-        System.out.println(MessageCodec.deserialize(MessageCodec.serialize(msg)).toString());
+        System.out.println(RpcMessageCodec.deserialize(RpcMessageCodec.serialize(msg)).toString());
     }
 }

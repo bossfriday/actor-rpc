@@ -1,16 +1,16 @@
 package cn.bossfridy.rpc.mailbox;
 
-import cn.bossfridy.rpc.transport.Message;
+import cn.bossfridy.rpc.transport.RpcMessage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
 @Slf4j
 public abstract class MailBox {
-    protected final LinkedBlockingQueue<Message> queue;
+    protected final LinkedBlockingQueue<RpcMessage> queue;
     protected boolean isStart = true;
 
-    public MailBox(LinkedBlockingQueue<Message> queue) {
+    public MailBox(LinkedBlockingQueue<RpcMessage> queue) {
         this.queue = queue;
     }
 
@@ -23,7 +23,7 @@ public abstract class MailBox {
             public void run() {
                 while (isStart) {
                     try {
-                        Message msg = queue.take();
+                        RpcMessage msg = queue.take();
                         process(msg);
                     } catch (Exception e) {
                         log.error("MailBox.process() error!", e);
@@ -36,7 +36,7 @@ public abstract class MailBox {
     /**
      * process
      */
-    public abstract void process(Message msg) throws Exception;
+    public abstract void process(RpcMessage msg) throws Exception;
 
     /**
      * stop
@@ -46,7 +46,7 @@ public abstract class MailBox {
     /**
      * put
      */
-    public void put(Message msg) {
+    public void put(RpcMessage msg) {
         try {
             this.queue.put(msg);
         } catch (Exception e) {
