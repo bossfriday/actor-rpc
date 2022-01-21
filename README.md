@@ -1,11 +1,61 @@
 > Actor 模型及 Akka 简介
-# 实现规划
+# 实现概要
 * 使用protostuff序列化（.proto文件编写恶心，与Protocol Buffer性能几乎接近），同时支持Java内置Serializable；
 * 使用Netty进行通讯（本机通讯不走网络，直接入收件箱队列）；
 * 使用ZK进行集群状态管理；
-* 使用method+resourceId进行一致性哈希路由，同时支持随机路由；
-and so on ...
+* 二级路由：数据中心路由+ 数据中心内路由。数据中心内使用method+resourceId进行一致性哈希路由，同时支持随机路由、强制路由方式；
+* RpcMessage数据结构：
+```
+    /**
+     * sessionId（16字节，类比XI）
+     **/
+    private byte[] session;
 
+    /**
+     * 目标方法（最大长度：1字节无符号数字）
+     **/
+    private String targetMethod;
+
+    /**
+     * 源方法（最大长度：1字节无符号数字）
+     **/
+    private String sourceMethod;
+
+    /**
+     * 源IP（4字节）
+     **/
+    private String sourceHost;
+
+    /**
+     * 目标IP（4字节）
+     **/
+    private String targetHost;
+
+    /**
+     * 源端口（4字节）
+     **/
+    private int sourcePort;
+
+    /**
+     * 目标端口（4字节）
+     **/
+    private int targetPort;
+
+    /**
+     * 消息产生时间（8字节）
+     **/
+    private long timestamp;
+
+    /**
+     * 版本（为后续扩展留后手）
+     **/
+    private byte version;
+
+    /**
+     * 消息体（protostuff序列化，最大长度：3字节无符号数字）
+     **/
+    private byte[] payloadData;
+```
 
 # 1. 背景
 随着业务的发展，现代分布式系统对于垂直扩展、水平扩展、容错性的要求越来越高。常见的一些编程模式已经不能很好的解决这些问题。  
