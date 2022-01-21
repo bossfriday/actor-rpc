@@ -24,7 +24,7 @@ import static cn.bossfridy.common.Const.EACH_RECEIVE_QUEUE_SIZE;
 @Slf4j
 public class ActorSystem {
     @Getter
-    private String systemName;
+    private String workerNodeName;
 
     @Getter
     private InetSocketAddress selfAddress;
@@ -49,8 +49,8 @@ public class ActorSystem {
     @Getter
     private boolean isStarted = false;
 
-    private ActorSystem(String systemName, InetSocketAddress selfAddress) {
-        this.systemName = systemName;
+    private ActorSystem(String workerNodeName, InetSocketAddress selfAddress) {
+        this.workerNodeName = workerNodeName;
         this.selfAddress = selfAddress;
         this.dispatcher = new ActorDispatcher(this);
         this.inBox = new MessageInBox(EACH_RECEIVE_QUEUE_SIZE, selfAddress.getPort(), this.dispatcher);
@@ -60,8 +60,8 @@ public class ActorSystem {
     /**
      * create
      */
-    public static ActorSystem create(String systemName, InetSocketAddress selfAddress) {
-        return new ActorSystem(systemName, selfAddress);
+    public static ActorSystem create(String workerNodeName, InetSocketAddress selfAddress) {
+        return new ActorSystem(workerNodeName, selfAddress);
     }
 
     /**

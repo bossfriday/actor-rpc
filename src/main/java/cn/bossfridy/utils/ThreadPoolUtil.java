@@ -1,20 +1,31 @@
-package cn.bossfridy.rpc.thread;
+package cn.bossfridy.utils;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.concurrent.*;
 
-public class ThreadPoolHelper {
+public class ThreadPoolUtil {
     private static final ConcurrentHashMap<String, ExecutorService> threadMap = new ConcurrentHashMap<>();
     public static final int AVAILABLE_PROCESSORS;
+    private static final String THREAD_COMMON = "common";
 
     static {
         AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
     }
 
+    /**
+     * getCommonThreadPool
+     */
+    public static ExecutorService getCommonThreadPool() {
+        return getThreadPool(THREAD_COMMON, Runtime.getRuntime().availableProcessors() * 2);
+    }
+
+    /**
+     * getThreadPool
+     */
     public static ExecutorService getThreadPool(String name) {
-        return getThreadPool(name, ThreadPoolHelper.AVAILABLE_PROCESSORS);
+        return getThreadPool(name, ThreadPoolUtil.AVAILABLE_PROCESSORS);
     }
 
     public static ExecutorService getThreadPool(String name, int size) {
@@ -84,8 +95,14 @@ public class ThreadPoolHelper {
         return new LinkedBlockingQueue(queueMaxSize);
     }
 
+    /**
+     * getCoreSize：未将来有配置优先走配置留统一处理口子
+     * @param name
+     * @param coreSize
+     * @return
+     */
     private static int getCoreSize(String name, int coreSize) {
-        // todo:有配置优先走配置
+        // 有配置优先走配置
         return coreSize;
     }
 }

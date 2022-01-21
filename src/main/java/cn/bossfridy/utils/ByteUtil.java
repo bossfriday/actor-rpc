@@ -14,7 +14,7 @@ public class ByteUtil {
      * @return int
      * @throws UnknownHostException
      */
-    public static int ipToInt(String ip) throws UnknownHostException {
+    public static int ipToInt(String ip) {
         byte[] addr = ipToBytes(ip);
         // reference java.net.Inet4Address.Inet4Address
         int address = addr[3] & 0xFF;

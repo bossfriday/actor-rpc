@@ -3,7 +3,7 @@ package cn.bossfridy.rpc.dispatch;
 import cn.bossfridy.rpc.ActorSystem;
 import cn.bossfridy.rpc.actor.UntypedActor;
 import cn.bossfridy.rpc.interfaces.IExecutor;
-import cn.bossfridy.rpc.thread.ThreadPoolHelper;
+import cn.bossfridy.utils.ThreadPoolUtil;
 import cn.bossfridy.rpc.transport.RpcMessage;
 import cn.bossfridy.utils.UUIDUtil;
 import io.netty.util.Timeout;
@@ -19,10 +19,10 @@ import static cn.bossfridy.common.Const.*;
 
 @Slf4j
 public class ActorDispatcher {
-    public static final ExecutorService DEFAULT_THREAD_POOL = ThreadPoolHelper.getThreadPool(THREAD_POOL_NAME_ACTORS_POOLS, ThreadPoolHelper.AVAILABLE_PROCESSORS * 2);
+    public static final ExecutorService DEFAULT_THREAD_POOL = ThreadPoolUtil.getThreadPool(THREAD_POOL_NAME_ACTORS_POOLS, ThreadPoolUtil.AVAILABLE_PROCESSORS * 2);
 
-    private static final ExecutorService dispatchThreadPool = ThreadPoolHelper.getThreadPool(THREAD_POOL_NAME_ACTORS_DISPATCH, 2);
-    private static final ExecutorService callBackThreadPool = ThreadPoolHelper.getThreadPool(THREAD_POOL_NAME_ACTORS_CALLBACK, ThreadPoolHelper.AVAILABLE_PROCESSORS);
+    private static final ExecutorService dispatchThreadPool = ThreadPoolUtil.getThreadPool(THREAD_POOL_NAME_ACTORS_DISPATCH, 2);
+    private static final ExecutorService callBackThreadPool = ThreadPoolUtil.getThreadPool(THREAD_POOL_NAME_ACTORS_CALLBACK, ThreadPoolUtil.AVAILABLE_PROCESSORS);
 
     private ConcurrentHashMap<String, IExecutor> actorMap = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, IExecutor> callbackActorMap = new ConcurrentHashMap<>();

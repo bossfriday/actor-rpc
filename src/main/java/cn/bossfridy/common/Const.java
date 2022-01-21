@@ -7,6 +7,7 @@ public class Const {
     public static final String THREAD_POOL_NAME_ACTORS_DISPATCH = "Actors_Dispatch";
     public static final String THREAD_POOL_NAME_ACTORS_POOLS = "Actors_Pools";
     public static final String THREAD_POOL_NAME_ACTORS_CALLBACK = "Actors_CallBack";
+    public static final String ZK_CLIENT_THREAD_POOL = "Actors_CallBack";
 
     /**
      * actor
