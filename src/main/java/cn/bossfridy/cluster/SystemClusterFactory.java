@@ -3,8 +3,8 @@ package cn.bossfridy.cluster;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ActorClusterRouterFactory {
-    private static ActorClusterRouter cluster = null;
+public class SystemClusterFactory {
+    private static SystemCluster cluster = null;
     private static ReentrantLock lock = new ReentrantLock();
 
     public static void build(String zkAddress, String systemName, String dataCenterName, String nodeName) throws Exception {
@@ -12,7 +12,7 @@ public class ActorClusterRouterFactory {
             lock.lock();
             try {
                 if (cluster == null) {
-                    cluster = new ActorClusterRouter(zkAddress, systemName, dataCenterName, nodeName);
+                    cluster = new SystemCluster(zkAddress, systemName, dataCenterName, nodeName);
                 }
             } finally {
                 lock.unlock();
@@ -35,7 +35,7 @@ public class ActorClusterRouterFactory {
         build(zkAddress, systemName, dataCenterName, nodeName);
     }
 
-    public static ActorClusterRouter getCluster() {
+    public static SystemCluster getCluster() {
         if (cluster == null)
             throw new RuntimeException("cluster is null! plz init firstly.");
 

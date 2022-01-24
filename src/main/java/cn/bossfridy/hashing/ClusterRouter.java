@@ -1,9 +1,12 @@
-package cn.bossfridy.cluster.router;
+package cn.bossfridy.hashing;
 
 import cn.bossfridy.utils.MurmurHashUtil;
 
 import java.util.*;
 
+/**
+ * 一致性哈希集群路由（算法：murmur64，ketama也很常用，暂不考虑设置哈希算法）
+ */
 public class ClusterRouter<T extends BaseClusterNode> {
     private TreeMap<Long, T> nodes; // 虚拟节点
 

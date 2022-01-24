@@ -1,7 +1,8 @@
 package cn.bossfridy.cluster;
 
-import cn.bossfridy.cluster.router.BaseClusterNode;
+import cn.bossfridy.hashing.BaseClusterNode;
 import cn.bossfridy.utils.ByteUtil;
+import cn.bossfridy.utils.GsonUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,14 +10,22 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 
 @Slf4j
-public class ClusterNode extends BaseClusterNode {
+public class ClusterNode extends BaseClusterNode<ClusterNode> {
     @Getter
-    @Setter
-    private String nodeName;
+    protected String host;
+
+    @Getter
+    protected int port;
 
     @Getter
     @Setter
     private List<String> methods;
+
+    protected ClusterNode(String name, int virtualNodesNum, String host, int port) {
+        super(name, virtualNodesNum);
+        this.host = host;
+        this.port = port;
+    }
 
     /**
      * addMethod
@@ -38,12 +47,7 @@ public class ClusterNode extends BaseClusterNode {
     }
 
     @Override
-    protected int getVirtualNodesNum() {
-        return 1000; // 先hardcode，常规下需要对接配置中心。
-    }
-
-    @Override
-    protected int compareTo(BaseClusterNode node) {
+    protected int compareTo(ClusterNode node) {
         int int1 = ByteUtil.ipToInt(this.host);
         int int2 = ByteUtil.ipToInt(node.getHost());
         if (int1 > int2) {
@@ -63,25 +67,17 @@ public class ClusterNode extends BaseClusterNode {
 
     @Override
     public String toString() {
-        return "ClusterNode{" +
-                "nodeName='" + nodeName + '\'' +
-                ", methods=" + methods +
-                ", host='" + host + '\'' +
-                ", port=" + port +
-                '}';
+        return GsonUtil.beanToJson(this);
     }
-
 
     public static void main(String[] args) {
         List<ClusterNode> nodeList = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i < 10; i++) {
+            String name = "node" + i;
             String host = "127.0.0." + random.nextInt(10);
             int port = random.nextInt(10000);
-            ClusterNode node = new ClusterNode();
-            node.setHost(host);
-            node.setPort(port);
-
+            ClusterNode node = new ClusterNode(name, 1000, host, port);
             nodeList.add(node);
         }
 

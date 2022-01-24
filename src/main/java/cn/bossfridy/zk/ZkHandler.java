@@ -3,6 +3,7 @@ package cn.bossfridy.zk;
 import cn.bossfridy.utils.ByteUtil;
 import cn.bossfridy.utils.GsonUtil;
 import cn.bossfridy.utils.ThreadPoolUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import static cn.bossfridy.common.Const.ZK_CLIENT_THREAD_POOL;
 
+@Slf4j
 public class ZkHandler {
     private String zkAddress;
     private CuratorFramework client = null;
@@ -37,6 +39,7 @@ public class ZkHandler {
      */
     public void addPersistedNode(String path, Object obj) throws Exception {
         this.addNode(path, obj, CreateMode.PERSISTENT);
+        log.info("ZkHandler.addPersistedNode() done, path=" + path + ", " + obj.toString());
     }
 
     /**
@@ -44,6 +47,7 @@ public class ZkHandler {
      */
     public void addEphemeralNode(String path, Object obj) throws Exception {
         this.addNode(path, obj, CreateMode.EPHEMERAL);
+        log.info("ZkHandler.addEphemeralNode() done, path=" + path + ", " + obj.toString());
     }
 
     /**
@@ -60,17 +64,19 @@ public class ZkHandler {
         }
 
         this.client.setData().forPath(path, ByteUtil.string2Bytes(data));
+        log.info("ZkHandler.updateNode() done, path=" + path + ", " + obj.toString());
     }
 
     /**
      * deleteNode
      */
-    public void deleteNode(String zkNodePath) throws Exception {
-        if(StringUtils.isBlank(zkNodePath)) {
+    public void deleteNode(String path) throws Exception {
+        if (StringUtils.isBlank(path)) {
             throw new Exception("zkNodePath is blank!");
         }
 
-        client.delete().deletingChildrenIfNeeded().forPath(zkNodePath);
+        client.delete().deletingChildrenIfNeeded().forPath(path);
+        log.info("ZkHandler.updateNode() done, path=" + path);
     }
 
     /**
