@@ -1,0 +1,10 @@
+system:
+ name: actorSystem
+zk:
+ address: 127.0.0.1:2181
+route:
+ nodeName: node1
+ virtualNodesNum: 100
+ rpc:
+  host: 127.0.0.1
+  port: 8080

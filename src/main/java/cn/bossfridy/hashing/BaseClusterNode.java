@@ -1,12 +1,11 @@
 package cn.bossfridy.hashing;
 
-import lombok.Getter;
+import lombok.Data;
 
+@Data
 public abstract class BaseClusterNode<T extends BaseClusterNode> {
-    @Getter
-    protected String name;  // 节点名称
+    protected String name;  // 节点名称（不重）
 
-    @Getter
     protected int virtualNodesNum;  // 虚拟节点数（路由权重控制使用）
 
     protected BaseClusterNode(String name, int virtualNodesNum) {

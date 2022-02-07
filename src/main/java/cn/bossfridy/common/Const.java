@@ -22,4 +22,15 @@ public class Const {
     public static final int EACH_RECEIVE_QUEUE_SIZE = 1024 * 1024;
     public static final int EACH_SEND_QUEUE_SIZE = 1024 * 1024;
     public static final int SLOW_QUEUE_THRESHOLD = 500; // ms
+
+    /**
+     * config
+     */
+    public static final String SYSTEM_NAME = "system.name";
+    public static final String ZK_ADDRESS = "zk.address";
+    public static final String ROUTE_NODE_NAME = "route.nodeName";
+    public static final String ROUTE_VIRTUAL_NODES_NUM = "route.virtualNodesNum";
+    public static final String ROUTE_RPC_HOST = "route.rpc.host";
+    public static final String ROUTE_RPC_PORT = "route.rpc.port";
+
 }

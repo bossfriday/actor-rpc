@@ -1,43 +1,35 @@
 package cn.bossfridy.cluster;
 
-import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
+import cn.bossfridy.common.Const;
+import cn.bossfridy.conf.ConfigHelper;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SystemClusterFactory {
     private static SystemCluster cluster = null;
-    private static ReentrantLock lock = new ReentrantLock();
+    private static boolean initFailedFlag = false;
 
-    public static void build(String zkAddress, String systemName, String dataCenterName, String nodeName) throws Exception {
-        if (cluster == null) {
-            lock.lock();
-            try {
-                if (cluster == null) {
-                    cluster = new SystemCluster(zkAddress, systemName, dataCenterName, nodeName);
-                }
-            } finally {
-                lock.unlock();
-            }
+    static {
+        try {
+            String systemName = ConfigHelper.getInstance().getConfigValue(Const.SYSTEM_NAME);
+            String zkAddress = ConfigHelper.getInstance().getConfigValue(Const.ZK_ADDRESS);
+            String nodeName = ConfigHelper.getInstance().getConfigValue(Const.ROUTE_NODE_NAME);
+            String host = ConfigHelper.getInstance().getConfigValue(Const.ROUTE_RPC_HOST);
+            int port = ConfigHelper.getInstance().getConfigValue(Const.ROUTE_RPC_PORT);
+            int virtualNodesNum = ConfigHelper.getInstance().getConfigValue(Const.ROUTE_VIRTUAL_NODES_NUM);
+            cluster = new SystemCluster(systemName, zkAddress, nodeName, host, port, virtualNodesNum);
+        } catch (Exception e) {
+            initFailedFlag = true;
+            log.error("SystemClusterFactory init error!", e);
         }
     }
 
-    public static void build(List<String> zkList, String systemName, String dataCenterName, String nodeName) throws Exception {
-        String zkAddress = "";
-        if (zkList != null && zkList.size() > 0) {
-            for (String str : zkList) {
-                zkAddress += str + ",";
-            }
-
-            if (zkAddress.endsWith(",")) {
-                zkAddress = zkAddress.substring(0, zkAddress.length() - 1);
-            }
-        }
-
-        build(zkAddress, systemName, dataCenterName, nodeName);
-    }
-
+    /**
+     * getCluster
+     */
     public static SystemCluster getCluster() {
-        if (cluster == null)
-            throw new RuntimeException("cluster is null! plz init firstly.");
+        if (initFailedFlag)
+            throw new RuntimeException("SystemClusterFactory init error!");
 
         return cluster;
     }

@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class NettyClient {
     private static final int QUEUE_FIX_SIZE = 10000;
     private static final int CONNECT_TIMEOUT_MILLIS = 10000;
-    private static final int RECONNECT_DELAY_SECOND = 5;
+    private static final int RECONNECT_INTERVAL_SECOND = 5; // 重连时间间隔（秒）
 
     private Bootstrap bootstrap;
     private EventLoopGroup group;
@@ -72,7 +72,7 @@ public class NettyClient {
                     public void run() {
                         connect();
                     }
-                }, RECONNECT_DELAY_SECOND, TimeUnit.SECONDS);  // 避免对端断线后不停重连导致cpu高
+                }, RECONNECT_INTERVAL_SECOND, TimeUnit.SECONDS);
 
                 return;
             }

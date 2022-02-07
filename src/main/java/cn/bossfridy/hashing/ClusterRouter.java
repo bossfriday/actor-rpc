@@ -3,6 +3,7 @@ package cn.bossfridy.hashing;
 import cn.bossfridy.utils.MurmurHashUtil;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 一致性哈希集群路由（算法：murmur64，ketama也很常用，暂不考虑设置哈希算法）
@@ -14,9 +15,7 @@ public class ClusterRouter<T extends BaseClusterNode> {
      * refresh
      */
     public synchronized void refresh(List<T> clusterNodes) throws Exception {
-        if (clusterNodes == null || clusterNodes.size() == 0) {
-            throw new RuntimeException("clusterNodes is null or empty!");
-        }
+        check(clusterNodes);
 
         Collections.sort(clusterNodes, new Comparator<T>() {
             @Override
@@ -63,5 +62,20 @@ public class ClusterRouter<T extends BaseClusterNode> {
      */
     private Long hash(String key) throws Exception {
         return MurmurHashUtil.hash64(key);
+    }
+
+    private void check(List<T> clusterNodes) throws Exception {
+        ConcurrentHashMap<String, T> map = new ConcurrentHashMap<>();
+        if (clusterNodes == null || clusterNodes.size() == 0) {
+            throw new RuntimeException("clusterNodes is null or empty!");
+        }
+
+        for (T item : clusterNodes) {
+            if (map.containsKey(item.getName())) {
+                throw new Exception("duplicated node:" + item.getName());
+            }
+
+            map.put(item.getName(), item);
+        }
     }
 }

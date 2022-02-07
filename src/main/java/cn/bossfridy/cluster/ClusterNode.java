@@ -12,9 +12,11 @@ import java.util.*;
 @Slf4j
 public class ClusterNode extends BaseClusterNode<ClusterNode> {
     @Getter
+    @Setter
     protected String host;
 
     @Getter
+    @Setter
     protected int port;
 
     @Getter
@@ -33,6 +35,7 @@ public class ClusterNode extends BaseClusterNode<ClusterNode> {
     public void addMethod(String method) {
         if (this.methods == null)
             this.methods = new ArrayList<String>();
+
         this.methods.add(method);
     }
 

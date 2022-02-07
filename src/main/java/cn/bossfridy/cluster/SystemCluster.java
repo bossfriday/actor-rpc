@@ -1,23 +1,21 @@
 package cn.bossfridy.cluster;
 
+import cn.bossfridy.rpc.ActorSystem;
+import cn.bossfridy.rpc.actor.UntypedActor;
 import cn.bossfridy.zk.ZkChildrenChangeListener;
 import cn.bossfridy.zk.ZkHandler;
-import cn.bossfridy.rpc.ActorSystem;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 
-import java.util.List;
+import java.net.InetSocketAddress;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Slf4j
 public class SystemCluster {
-    private String systemName;
-    private String dataCenterName;
-    private String nodeName;
     private String basePath;
-    private String dataCenterHomePath;
     private String clusterNodeHomePath;
 
+    private ClusterNode currentWorkerNode;
     private ActorSystem actorSystem;
     private ZkHandler zkHandler;
 
@@ -25,27 +23,17 @@ public class SystemCluster {
     private ReentrantReadWriteLock.ReadLock readLock = rwLock.readLock();
     private ReentrantReadWriteLock.WriteLock writeLock = rwLock.writeLock();
 
-    public SystemCluster(String zkAddress, String systemName, String dataCenterName, String nodeName) throws Exception {
-        if (StringUtils.isEmpty(zkAddress))
-            throw new Exception("zkAddress isEmpty!");
-
-        if (StringUtils.isEmpty(systemName))
-            throw new Exception("systemName isEmpty!");
-
-        if (StringUtils.isEmpty(dataCenterName))
-            throw new Exception("dataCenterName isEmpty!");
-
-        this.systemName = systemName;
-        this.dataCenterName = dataCenterName;
-        this.nodeName = nodeName;
+    public SystemCluster(String systemName,
+                         String zkAddress,
+                         String nodeName,
+                         String host,
+                         int port,
+                         int virtualNodesNum) throws Exception {
         this.zkHandler = new ZkHandler(zkAddress);
-
-        this.basePath = "/" + systemName + "/" + dataCenterName;
+        this.actorSystem = ActorSystem.create(nodeName, new InetSocketAddress(host, port));
+        this.currentWorkerNode = new ClusterNode(nodeName, virtualNodesNum, host, port);
+        this.basePath = "/" + systemName;
         this.clusterNodeHomePath = basePath + "/clusterNodes";
-        this.dataCenterHomePath = "/" + systemName + "/dataCenters";
-
-        this.loadDataCenter();
-        this.onDataCenterChanged();
 
         this.loadClusterNode();
         this.onClusterNodeChanged();
@@ -53,60 +41,33 @@ public class SystemCluster {
         this.initActorSystem();
     }
 
-    private void loadDataCenter() {
-        try {
-            if (!this.zkHandler.checkExist(dataCenterHomePath)) {
-                this.zkHandler.addPersistedNode(dataCenterHomePath, System.currentTimeMillis());
-            }
-
-            List<String> dcNodeList = this.zkHandler.getChildNodeList(dataCenterHomePath);
-        } catch (Exception e) {
-            log.error("SystemCluster.loadDataCenter() error!", e);
+    /**
+     * startActorSystem
+     */
+    public void startActorSystem() {
+        if (!this.actorSystem.isStarted()) {
+            this.actorSystem.start();
         }
     }
 
-    private void onDataCenterChanged() throws Exception {
-        try {
-            final SystemCluster cluster = this;
-            this.zkHandler.addListener4Children(dataCenterHomePath, new ZkChildrenChangeListener() {
-                @Override
-                public void added(String path, byte[] data) {
-                    cluster.loadDataCenter();
-                }
+    /**
+     * publishMethods
+     */
+    public void publishMethods() {
 
-                @Override
-                public void updated(String path, byte[] data) {
-                    this.added(path, data);
-                }
+    }
 
-                @Override
-                public void removed(String path, byte[] data) {
-                    this.added(path, data);
-                }
+    /**
+     * registerActor
+     */
+    public void registerActor(String method, Class<? extends UntypedActor> cls, int min, int max) throws Exception {
+        this.actorSystem.registerActor(method, min, max, cls);
+        this.currentWorkerNode.addMethod(method);
+    }
 
-                @Override
-                public void connectInitialized() {
-                    // just ignore
-                }
-
-                @Override
-                public void reconnected() {
-                    // just ignore
-                }
-
-                @Override
-                public void suspended() {
-                    // just ignore
-                }
-
-                @Override
-                public void connectLost() {
-                    // just ignore
-                }
-            });
-        } catch (Exception e) {
-            log.error("SystemCluster.onDataCenterChanged() error!", e);
-        }
+    public void registerActor(String method, Class<? extends UntypedActor> cls, int min, int max, ExecutorService pool) throws Exception {
+        this.actorSystem.registerActor(method, min, max, pool, cls);
+        this.currentWorkerNode.addMethod(method);
     }
 
     private void loadClusterNode() {
