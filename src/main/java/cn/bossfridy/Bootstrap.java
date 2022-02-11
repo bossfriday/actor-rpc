@@ -5,7 +5,7 @@ import cn.bossfridy.plugin.IPlugin;
 import cn.bossfridy.plugin.PluginElement;
 import cn.bossfridy.register.ActorRegister;
 import cn.bossfridy.register.ActorRoute;
-import cn.bossfridy.router.ClusterRouterFactory;
+import cn.bossfridy.router.ClusterRouterBuilder;
 import cn.bossfridy.rpc.actor.UntypedActor;
 import cn.bossfridy.utils.ClassLoaderUtil;
 import cn.bossfridy.utils.XmlParserUtil;
@@ -33,7 +33,7 @@ public abstract class Bootstrap implements IPlugin {
         try {
             ServiceConfig config = XmlParserUtil.parse(serviceConfigFilePath, ServiceConfig.class);
             log.info("currentNode service-config:" + config.toString());
-            ClusterRouterFactory.build(config);
+            ClusterRouterBuilder.build(config);
 
             // 有配置走配置，无配置反射获取当前jar包内所有UntypedActor类
             List<Class<? extends UntypedActor>> classList = null;
@@ -71,7 +71,7 @@ public abstract class Bootstrap implements IPlugin {
                 }
             });
 
-            ClusterRouterFactory.getClusterRouter().publishMethods();
+            ClusterRouterBuilder.getClusterRouter().publishMethods();
             start();
             log.info("Bootstrap.startup() done.");
         } catch (Exception e) {

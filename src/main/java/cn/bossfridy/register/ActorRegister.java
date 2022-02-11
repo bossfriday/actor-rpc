@@ -1,6 +1,6 @@
 package cn.bossfridy.register;
 
-import cn.bossfridy.router.ClusterRouterFactory;
+import cn.bossfridy.router.ClusterRouterBuilder;
 import cn.bossfridy.rpc.actor.UntypedActor;
 import cn.bossfridy.utils.ThreadPoolUtil;
 
@@ -20,11 +20,11 @@ public class ActorRegister {
      * @param pool
      */
     public static void registerActor(String method, Class<? extends UntypedActor> cls, int min, int max, ExecutorService pool) throws Exception {
-        ClusterRouterFactory.getClusterRouter().registerActor(method, cls, min, max, pool);
+        ClusterRouterBuilder.getClusterRouter().registerActor(method, cls, min, max, pool);
     }
 
     public static void registerActor(String method, Class<? extends UntypedActor> cls, int min, int max) throws Exception {
-        ClusterRouterFactory.getClusterRouter().registerActor(method, cls, min, max);
+        ClusterRouterBuilder.getClusterRouter().registerActor(method, cls, min, max);
     }
 
     public static void registerActor(String method, Class<? extends UntypedActor> cls, int min, int max, String poolName, int poolThreadSize) throws Exception {
