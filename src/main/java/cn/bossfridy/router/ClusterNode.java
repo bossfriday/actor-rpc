@@ -1,4 +1,4 @@
-package cn.bossfridy.cluster;
+package cn.bossfridy.router;
 
 import cn.bossfridy.hashing.BaseClusterNode;
 import cn.bossfridy.utils.ByteUtil;
@@ -22,6 +22,10 @@ public class ClusterNode extends BaseClusterNode<ClusterNode> {
     @Getter
     @Setter
     private List<String> methods;
+
+    public ClusterNode() {
+        super("", 0);
+    }
 
     protected ClusterNode(String name, int virtualNodesNum, String host, int port) {
         super(name, virtualNodesNum);

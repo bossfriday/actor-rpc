@@ -18,8 +18,8 @@ import java.lang.reflect.Constructor;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 
-import static cn.bossfridy.common.Const.DEFAULT_CALLBACK_ACTOR_TTL;
-import static cn.bossfridy.common.Const.EACH_RECEIVE_QUEUE_SIZE;
+import static cn.bossfridy.Const.DEFAULT_CALLBACK_ACTOR_TTL;
+import static cn.bossfridy.Const.EACH_RECEIVE_QUEUE_SIZE;
 
 @Slf4j
 public class ActorSystem {

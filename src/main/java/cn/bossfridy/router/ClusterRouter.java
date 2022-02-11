@@ -1,4 +1,4 @@
-package cn.bossfridy.cluster;
+package cn.bossfridy.router;
 
 import cn.bossfridy.rpc.ActorSystem;
 import cn.bossfridy.rpc.actor.UntypedActor;
@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Slf4j
-public class SystemCluster {
+public class ClusterRouter {
     private String basePath;
     private String clusterNodeHomePath;
 
@@ -23,7 +23,7 @@ public class SystemCluster {
     private ReentrantReadWriteLock.ReadLock readLock = rwLock.readLock();
     private ReentrantReadWriteLock.WriteLock writeLock = rwLock.writeLock();
 
-    public SystemCluster(String systemName,
+    public ClusterRouter(String systemName,
                          String zkAddress,
                          String nodeName,
                          String host,
@@ -76,7 +76,7 @@ public class SystemCluster {
 
     private void onClusterNodeChanged() {
         try {
-            final SystemCluster cluster = this;
+            final ClusterRouter cluster = this;
             this.zkHandler.addListener4Children(clusterNodeHomePath, new ZkChildrenChangeListener() {
                 @Override
                 public void added(String path, byte[] data) {
@@ -114,7 +114,7 @@ public class SystemCluster {
                 }
             });
         } catch (Exception e) {
-            log.error("SystemCluster.onClusterNodeChanged() error!", e);
+            log.error("ClusterRouter.onClusterNodeChanged() error!", e);
         }
 
     }

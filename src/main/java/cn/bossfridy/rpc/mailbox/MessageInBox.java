@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static cn.bossfridy.common.Const.SLOW_QUEUE_THRESHOLD;
+import static cn.bossfridy.Const.SLOW_QUEUE_THRESHOLD;
 
 @Slf4j
 public class MessageInBox extends MailBox {

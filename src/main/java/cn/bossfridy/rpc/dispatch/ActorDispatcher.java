@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static cn.bossfridy.common.Const.*;
+import static cn.bossfridy.Const.*;
 
 @Slf4j
 public class ActorDispatcher {

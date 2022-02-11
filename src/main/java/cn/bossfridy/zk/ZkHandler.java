@@ -15,7 +15,7 @@ import org.apache.zookeeper.data.Stat;
 
 import java.util.List;
 
-import static cn.bossfridy.common.Const.ZK_CLIENT_THREAD_POOL;
+import static cn.bossfridy.Const.ZK_CLIENT_THREAD_POOL;
 
 @Slf4j
 public class ZkHandler {
