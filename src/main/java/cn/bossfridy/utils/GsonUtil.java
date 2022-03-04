@@ -12,7 +12,7 @@ public class GsonUtil {
 
     static {
         if (gson == null) {
-            gson = new Gson();
+            gson = new GsonBuilder().disableHtmlEscaping().create();
         }
     }
 
@@ -78,7 +78,7 @@ public class GsonUtil {
      * @param <T>
      * @return
      */
-    public static  <T> List<T> jsonToList(String json, Class<T> cls) {
+    public static <T> List<T> jsonToList(String json, Class<T> cls) {
         Gson gson = new Gson();
         List<T> list = new ArrayList<T>();
         JsonArray array = new JsonParser().parse(json).getAsJsonArray();

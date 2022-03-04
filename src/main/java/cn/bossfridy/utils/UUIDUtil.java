@@ -1,6 +1,7 @@
 package cn.bossfridy.utils;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class UUIDUtil {
     private final static char[] DIGITS64 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_".toCharArray();
@@ -9,7 +10,10 @@ public class UUIDUtil {
      * getUUID
      */
     public static UUID getUUID() {
-        return UUID.randomUUID();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        UUID uuid = new UUID(random.nextLong(), random.nextLong());
+
+        return uuid;
     }
 
     /**
@@ -88,5 +92,14 @@ public class UUIDUtil {
             lsb = (lsb << 8) | (data[i] & 0xff);
 
         return new UUID(msb, lsb);
+    }
+
+    public static void main(String[] args) {
+        long begin = System.currentTimeMillis();
+        for (int i = 0; i < 10000000; i++) {
+            getUUID();
+        }
+
+        System.out.println(System.currentTimeMillis() - begin);
     }
 }

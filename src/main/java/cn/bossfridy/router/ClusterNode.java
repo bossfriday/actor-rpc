@@ -19,15 +19,7 @@ public class ClusterNode extends BaseClusterNode<ClusterNode> {
     @Setter
     protected int port;
 
-    @Getter
-    @Setter
-    private List<String> methods;
-
-    public ClusterNode() {
-        super("", 0);
-    }
-
-    protected ClusterNode(String name, int virtualNodesNum, String host, int port) {
+    public ClusterNode(String name, int virtualNodesNum, String host, int port) {
         super(name, virtualNodesNum);
         this.host = host;
         this.port = port;
@@ -37,9 +29,6 @@ public class ClusterNode extends BaseClusterNode<ClusterNode> {
      * addMethod
      */
     public void addMethod(String method) {
-        if (this.methods == null)
-            this.methods = new ArrayList<String>();
-
         this.methods.add(method);
     }
 
@@ -85,6 +74,11 @@ public class ClusterNode extends BaseClusterNode<ClusterNode> {
             String host = "127.0.0." + random.nextInt(10);
             int port = random.nextInt(10000);
             ClusterNode node = new ClusterNode(name, 1000, host, port);
+
+            for(int j=0;j<3;j++) {
+                node.addMethod("actor" + j);
+            }
+
             nodeList.add(node);
         }
 

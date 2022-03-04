@@ -22,4 +22,9 @@ public class Const {
     public static final int EACH_RECEIVE_QUEUE_SIZE = 1024 * 1024;
     public static final int EACH_SEND_QUEUE_SIZE = 1024 * 1024;
     public static final int SLOW_QUEUE_THRESHOLD = 500; // ms
+
+    /**
+     * zk
+     */
+    public static final String ZK_PATH_CLUSTER_NODE = "clusterNodes";
 }

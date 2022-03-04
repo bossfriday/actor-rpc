@@ -8,12 +8,11 @@
         <port>8080</port>
         <virtualNodesNum>100</virtualNodesNum>
     </clusterNode>
-    <!--
     <plugins>
         <plugin>
-            <name>rcx.service.broadcast</name>
-            <path>plugins/rcx.service.broadcast.jar</path>
-            <main>rcx.service.broadcast.Bootstrap</main>
+            <name>cn.bossfridy.service.broadcast</name>
+            <path>plugins/cn.bossfridy.service.broadcast.jar</path>
+            <main>cn.bossfridy.service.broadcast.Bootstrap</main>
         </plugin>
-    </plugins> -->
+    </plugins>
 </config>

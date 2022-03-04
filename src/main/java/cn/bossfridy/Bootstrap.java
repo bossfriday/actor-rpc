@@ -57,9 +57,9 @@ public abstract class Bootstrap implements IPlugin {
                         for (String method : route.methods()) {
                             try {
                                 if (isRegisterByPool) {
-                                    ActorRegister.registerActor(method, cls, route.min(), route.max(), route.poolName(), route.poolSize());
+                                    ActorRegister.registerActor(method, cls, getActorExecutorMin(route), getActorExecutorMax(route), route.poolName(), route.poolSize());
                                 } else {
-                                    ActorRegister.registerActor(method, cls, route.min(), route.max());
+                                    ActorRegister.registerActor(method, cls, getActorExecutorMin(route), getActorExecutorMax(route));
                                 }
 
                                 log.info("registerActor done: " + cls.getSimpleName());
@@ -86,5 +86,29 @@ public abstract class Bootstrap implements IPlugin {
         } catch (Exception e) {
             log.error("service shutdown error!", e);
         }
+    }
+
+    private static final int cpuProcessors;
+    private static final int defaultMin;
+    private static final int defaultMax;
+
+    static {
+        cpuProcessors = Runtime.getRuntime().availableProcessors();
+        defaultMin = cpuProcessors / 2;
+        defaultMax = cpuProcessors;
+    }
+
+    private static int getActorExecutorMin(ActorRoute route) {
+        if (route.min() > defaultMin)
+            return route.min();
+
+        return defaultMin;
+    }
+
+    private static int getActorExecutorMax(ActorRoute route) {
+        if (route.max() > defaultMax)
+            return route.max();
+
+        return defaultMax;
     }
 }

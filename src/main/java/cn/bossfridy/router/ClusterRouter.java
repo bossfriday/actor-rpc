@@ -1,5 +1,6 @@
 package cn.bossfridy.router;
 
+import cn.bossfridy.hashing.ActorHashRouter;
 import cn.bossfridy.rpc.ActorSystem;
 import cn.bossfridy.rpc.actor.UntypedActor;
 import cn.bossfridy.zk.ZkChildrenChangeListener;
@@ -7,8 +8,11 @@ import cn.bossfridy.zk.ZkHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import static cn.bossfridy.Const.ZK_PATH_CLUSTER_NODE;
 
 @Slf4j
 public class ClusterRouter {
@@ -18,6 +22,7 @@ public class ClusterRouter {
     private ClusterNode currentWorkerNode;
     private ActorSystem actorSystem;
     private ZkHandler zkHandler;
+    private ActorHashRouter actorHashRouter;
 
     private ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
     private ReentrantReadWriteLock.ReadLock readLock = rwLock.readLock();
@@ -33,11 +38,10 @@ public class ClusterRouter {
         this.actorSystem = ActorSystem.create(nodeName, new InetSocketAddress(host, port));
         this.currentWorkerNode = new ClusterNode(nodeName, virtualNodesNum, host, port);
         this.basePath = "/" + systemName;
-        this.clusterNodeHomePath = basePath + "/clusterNodes";
+        this.clusterNodeHomePath = basePath + "/" + ZK_PATH_CLUSTER_NODE;
 
-        this.loadClusterNode();
-        this.onClusterNodeChanged();
-
+        this.refreshConsistentHashRouter();
+        this.onClusterChanged();
         this.initActorSystem();
     }
 
@@ -53,7 +57,7 @@ public class ClusterRouter {
     /**
      * publishMethods
      */
-    public void publishMethods() {
+    public void publishMethods() throws Exception {
 
     }
 
@@ -70,17 +74,65 @@ public class ClusterRouter {
         this.currentWorkerNode.addMethod(method);
     }
 
-    private void loadClusterNode() {
+    /**
+     * getTargetNode
+     */
+    public ClusterNode getTargetNode(String method, String targetResourceId) {
+        this.readLock.lock();
+        try {
 
+        } finally {
+            this.readLock.unlock();
+        }
+
+        return null;
     }
 
-    private void onClusterNodeChanged() {
+    /**
+     * getTargetNodeList（集群广播使用）
+     */
+    public List<ClusterNode> getTargetNodeList(String method) {
+        this.readLock.lock();
+        try {
+
+        } finally {
+            this.readLock.unlock();
+        }
+
+        return null;
+    }
+
+    /**
+     * 刷新集群一致性哈希路由
+     */
+    private void refreshConsistentHashRouter() {
+        this.writeLock.lock();
+        try {
+            List<String> clusterNodeList = this.zkHandler.getChildNodeList(clusterNodeHomePath);
+            if (actorHashRouter == null) {
+                actorHashRouter = new ActorHashRouter(clusterNodeList);
+
+                return;
+            }
+
+            actorHashRouter.refresh(clusterNodeList);
+        } catch (Exception ex) {
+            log.error("loadClusterNode() error!", ex);
+        } finally {
+            this.writeLock.unlock();
+        }
+    }
+
+    /**
+     * 集群变化
+     */
+    private void onClusterChanged() {
         try {
             final ClusterRouter cluster = this;
             this.zkHandler.addListener4Children(clusterNodeHomePath, new ZkChildrenChangeListener() {
                 @Override
                 public void added(String path, byte[] data) {
-                    cluster.loadClusterNode();
+                    cluster.refreshConsistentHashRouter();
                 }
 
                 @Override
