@@ -1,9 +1,9 @@
 > Actor 模型及 Akka 简介
-# 实现概要
+# 实现概要（计划）
 * 使用protostuff序列化（.proto文件编写恶心，与Protocol Buffer性能几乎接近），同时支持Java内置Serializable；
 * 使用Netty进行通讯（本机通讯不走网络，直接入收件箱队列）；
 * 使用ZK进行集群状态管理；
-* 二级路由：数据中心路由+ 数据中心内路由。数据中心内使用method+resourceId进行一致性哈希路由，同时支持随机路由、强制路由方式；
+* 同一数据中心内使用method+resourceId进行一致性哈希路由，同时支持随机路由、强制路由方式（先不考虑多数据中心的二级路由，这种事情可以不在RPC层面去做）；
 * RpcMessage数据结构：
 ```
     /**
