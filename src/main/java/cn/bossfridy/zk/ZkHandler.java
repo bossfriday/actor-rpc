@@ -82,8 +82,14 @@ public class ZkHandler {
     /**
      * getChildNodeList
      */
-    public List<String> getChildNodeList(String path) throws Exception {
-        return this.client.getChildren().forPath(path);
+    public List<String> getChildNodeList(String path) {
+        try {
+            return this.client.getChildren().forPath(path);
+        } catch (Exception ex) {
+            log.warn("NoNode for " + path);
+        }
+
+        return null;
     }
 
     /**

@@ -19,6 +19,10 @@ public class ClusterNode extends BaseClusterNode<ClusterNode> {
     @Setter
     protected int port;
 
+    public ClusterNode() {
+        super("", 0);
+    }
+
     public ClusterNode(String name, int virtualNodesNum, String host, int port) {
         super(name, virtualNodesNum);
         this.host = host;

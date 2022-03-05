@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ClusterRouterBuilder {
     private static volatile ClusterRouter clusterRouter;
-    private ServiceConfig serviceConfig;
 
     /**
      * build
