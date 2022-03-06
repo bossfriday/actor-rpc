@@ -1,6 +1,6 @@
 package cn.bossfridy.rpc.test.hashing;
 
-import cn.bossfridy.hashing.ActorHashRouter;
+import cn.bossfridy.hashing.ConsistentHashRouter;
 import cn.bossfridy.router.ClusterNode;
 import cn.bossfridy.utils.UUIDUtil;
 
@@ -28,11 +28,11 @@ public class ActorHashRouterTest {
             nodeList.add(node);
         }
 
-        ActorHashRouter actorHashRouter = new ActorHashRouter<ClusterNode>(nodeList);
+        ConsistentHashRouter consistentHashRouter = new ConsistentHashRouter<ClusterNode>(nodeList);
         long begin = System.currentTimeMillis();
         for (int i = 0; i < 100000; i++) {
             String key = UUIDUtil.getUUID().toString();
-            ClusterNode targetNode = (ClusterNode) actorHashRouter.getRouter(key);
+            ClusterNode targetNode = (ClusterNode) consistentHashRouter.getRouter(key);
         }
         System.out.println(System.currentTimeMillis() - begin);
     }

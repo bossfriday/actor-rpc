@@ -1,9 +1,6 @@
 package cn.bossfridy.rpc.test.actorsystem.actors;
 
-import cn.bossfridy.rpc.actor.ActorRef;
 import cn.bossfridy.rpc.actor.UntypedActor;
-import cn.bossfridy.rpc.test.actorsystem.BarCluster;
-import cn.bossfridy.rpc.test.actorsystem.modules.Foo;
 import cn.bossfridy.rpc.test.actorsystem.modules.FooResult;
 
 public class Actor1 extends UntypedActor {

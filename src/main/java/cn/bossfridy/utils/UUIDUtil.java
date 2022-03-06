@@ -1,5 +1,6 @@
 package cn.bossfridy.utils;
 
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -39,10 +40,10 @@ public class UUIDUtil {
     }
 
     /**
-     * getUUIDBytes
+     * getShortString
      */
     public static String getShortString() {
-        return getShortString((UUID) null);
+        return getShortString((getUUID()));
     }
 
     /**
@@ -96,8 +97,17 @@ public class UUIDUtil {
 
     public static void main(String[] args) {
         long begin = System.currentTimeMillis();
-        for (int i = 0; i < 10000000; i++) {
-            getUUID();
+        HashMap<String, String> map = new HashMap<>();
+        for (int i = 0; i < 1000000; i++) {
+            String key = getShortString();
+            // System.out.println(key);
+            if (map.containsKey(key)) {
+                System.out.println("duplicated key:" + key);
+                continue;
+            }
+
+            map.put(key, key);
+
         }
 
         System.out.println(System.currentTimeMillis() - begin);

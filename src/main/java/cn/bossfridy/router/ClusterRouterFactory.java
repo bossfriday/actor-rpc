@@ -4,7 +4,7 @@ import cn.bossfridy.conf.ServiceConfig;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ClusterRouterBuilder {
+public class ClusterRouterFactory {
     private static volatile ClusterRouter clusterRouter;
 
     /**
@@ -12,7 +12,7 @@ public class ClusterRouterBuilder {
      */
     public static void build(ServiceConfig serviceConfig) throws Exception {
         if (clusterRouter == null) {
-            synchronized (ClusterRouterBuilder.class) {
+            synchronized (ClusterRouterFactory.class) {
                 if (clusterRouter == null) {
                     clusterRouter = new ClusterRouter(serviceConfig.getSystemName(),
                             serviceConfig.getZkAddress(),

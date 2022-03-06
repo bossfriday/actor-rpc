@@ -5,7 +5,7 @@ import cn.bossfridy.plugin.IPlugin;
 import cn.bossfridy.plugin.PluginElement;
 import cn.bossfridy.register.ActorRegister;
 import cn.bossfridy.register.ActorRoute;
-import cn.bossfridy.router.ClusterRouterBuilder;
+import cn.bossfridy.router.ClusterRouterFactory;
 import cn.bossfridy.rpc.actor.UntypedActor;
 import cn.bossfridy.utils.ClassLoaderUtil;
 import cn.bossfridy.utils.XmlParserUtil;
@@ -34,10 +34,10 @@ public abstract class ServiceBootstrap implements IPlugin {
     public void startup(String serviceConfigFilePath) {
         try {
             ServiceConfig config = getServiceConfig(serviceConfigFilePath);
-            ClusterRouterBuilder.build(config);
+            ClusterRouterFactory.build(config);
             registerActor(config);
-            ClusterRouterBuilder.getClusterRouter().publishMethods();
-            ClusterRouterBuilder.getClusterRouter().startActorSystem();
+            ClusterRouterFactory.getClusterRouter().registryService();
+            ClusterRouterFactory.getClusterRouter().startActorSystem();
             start();
             log.info("Bootstrap.startup() done.");
         } catch (Exception ex) {

@@ -28,21 +28,19 @@ public abstract class UntypedActor {
     public void onReceive(RpcMessage message, ActorSystem actorSystem) throws Exception {
         if (message == null || actorSystem == null) {
             log.warn("UntypedActor.onReceive(msg, actorSystem) returned by msg or actorSystem is null!");
-
             return;
         }
 
-        this.sender = ActorRef.noSender();
-        this.self = ActorRef.noSender();
-
+        this.self = new ActorRef(actorSystem.getSelfAddress().getHostName(), actorSystem.getSelfAddress().getPort(), UUIDUtil.getUUIDBytes(), message.getTargetMethod(), actorSystem);
         if (message.hasSource()) {
             if (message.getSourceMethod() == null) {
                 // source is callback actor
                 sender = new ActorRef(message.getSourceHost(), message.getSourcePort(), message.getSession(), actorSystem, null, 0);
             } else {
                 sender = new ActorRef(message.getSourceHost(), message.getSourcePort(), message.getSession(), message.getSourceMethod(), actorSystem);
-                self = new ActorRef(actorSystem.getSelfAddress().getHostName(), actorSystem.getSelfAddress().getPort(), UUIDUtil.getUUIDBytes(), message.getTargetMethod(), actorSystem);
             }
+        } else {
+            this.sender = ActorRef.noSender();
         }
 
         this.setSender(sender);

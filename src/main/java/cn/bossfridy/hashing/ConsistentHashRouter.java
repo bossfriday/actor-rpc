@@ -1,6 +1,8 @@
 package cn.bossfridy.hashing;
 
 import cn.bossfridy.utils.MurmurHashUtil;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
@@ -8,17 +10,22 @@ import java.util.*;
  * 一致性哈希路由
  * Hash算法：murmur64（ketama也很常用，暂不考虑设置哈希算法）
  */
-public class ActorHashRouter<T extends BaseClusterNode> {
+public class ConsistentHashRouter<T extends BaseClusterNode> {
+    @Getter
+    @Setter
+    private List<T> clusterNodes;
+
     private TreeMap<Long, T> hashRingNodes;
 
-    public ActorHashRouter(List<T> clusterNodes) throws Exception {
-        refresh(clusterNodes);
+    public ConsistentHashRouter(List<T> clusterNodes) throws Exception {
+        this.clusterNodes = clusterNodes;
+        refresh();
     }
 
     /**
      * refresh（上层代码保障线程安全，因为这里保障不了clusterNodes读取的线程安全）
      */
-    public void refresh(List<T> clusterNodes) throws Exception {
+    public void refresh() throws Exception {
         if (clusterNodes == null || clusterNodes.size() == 0)
             throw new Exception("clusterNodes is null or empty!");
 
@@ -41,7 +48,7 @@ public class ActorHashRouter<T extends BaseClusterNode> {
             }
 
             if (node.getVirtualNodesNum() > 100) {
-                throw new Exception("node.virtualNodesNum must less than 100!"); // 虚拟节点数设置较大将影响一定性（设置为成千上万也没有必要）
+                throw new Exception("node.virtualNodesNum must less than 100!"); // 虚拟节点数设置较大将影响一定性能（设置为成千上万也没有必要）
             }
 
             List<String> nodeMethods = node.methods;
