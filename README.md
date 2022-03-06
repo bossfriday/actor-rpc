@@ -1,61 +1,17 @@
 > Actor 模型及 Akka 简介
-# 实现概要（计划）
-* 使用protostuff序列化（.proto文件编写恶心，与Protocol Buffer性能几乎接近），同时支持Java内置Serializable；
-* 使用Netty进行通讯（本机通讯不走网络，直接入收件箱队列）；
-* 使用ZK进行集群状态管理；
-* 同一数据中心内使用method+resourceId进行一致性哈希路由，同时支持随机路由、强制路由方式（先不考虑多数据中心的二级路由，这种事情可以不在RPC层面去做）；
-* RpcMessage数据结构：
-```
-    /**
-     * sessionId（16字节，类比XI）
-     **/
-    private byte[] session;
 
-    /**
-     * 目标方法（最大长度：1字节无符号数字）
-     **/
-    private String targetMethod;
+# V1.0 ReleaseNote
+* 使用protostuff序列化（.proto文件编写恶心，与Protocol Buffer性能几乎接近）
+* 使用Netty进行通讯（同节点RPC不走网络，直接入收件箱队列）；
+* 路由策略：随机路由、指定Key路由、资源Id路由、强制路由
+* 使用ZK进行集群状态管理
+* 使用自定义注解进行服务注册及辅助控制（线程数量、方法名称设置等）
 
-    /**
-     * 源方法（最大长度：1字节无符号数字）
-     **/
-    private String sourceMethod;
+不带路由测试示例代码入口：
+cn.bossfridy.rpc.test.actorsystem.Bootstrap
 
-    /**
-     * 源IP（4字节）
-     **/
-    private String sourceHost;
-
-    /**
-     * 目标IP（4字节）
-     **/
-    private String targetHost;
-
-    /**
-     * 源端口（4字节）
-     **/
-    private int sourcePort;
-
-    /**
-     * 目标端口（4字节）
-     **/
-    private int targetPort;
-
-    /**
-     * 消息产生时间（8字节）
-     **/
-    private long timestamp;
-
-    /**
-     * 版本（为后续扩展留后手）
-     **/
-    private byte version;
-
-    /**
-     * 消息体（protostuff序列化，最大长度：3字节无符号数字）
-     **/
-    private byte[] payloadData;
-```
+带路由测试示例代码入口（依赖ZK，配置文件：test/resources/servie-config.xml）：
+cn.bossfridy.rpc.test.router.Bootstrap
 
 # 1. 背景
 随着业务的发展，现代分布式系统对于垂直扩展、水平扩展、容错性的要求越来越高。常见的一些编程模式已经不能很好的解决这些问题。  
