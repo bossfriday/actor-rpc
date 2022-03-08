@@ -116,7 +116,7 @@ public abstract class ServiceBootstrap implements IPlugin {
 
     static {
         cpuProcessors = Runtime.getRuntime().availableProcessors();
-        defaultMin = cpuProcessors / 2;
+        defaultMin = (cpuProcessors / 2) <= 0 ? 1 : (cpuProcessors / 2);
         defaultMax = cpuProcessors;
     }
 
