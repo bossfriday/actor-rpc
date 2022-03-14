@@ -13,6 +13,14 @@ cn.bossfridy.rpc.test.actorsystem.Bootstrap
 带路由测试示例代码入口（依赖ZK，配置文件：test/resources/servie-config.xml）：
 cn.bossfridy.rpc.test.router.Bootstrap
 
+# V1.1 ReleaseNote --todo
+使用Disruptor优化收件箱、发件箱；
+
+Disruptor简述：
+* 使用 RingBuffer 数据结构，数组元素在初始化时一次性全部创建，提升缓存命中率；对象循环利用，避免频繁 GC。
+* 前后56字节（7个long）缓存行填充的手法，使得每个变量独占一个缓存行，避免伪共享，提升CPU缓存利用率。
+* 采用CAS无锁算法，避免频繁加锁、解锁的性能消耗。
+
 # 1. 背景
 随着业务的发展，现代分布式系统对于垂直扩展、水平扩展、容错性的要求越来越高。常见的一些编程模式已经不能很好的解决这些问题。  
 
