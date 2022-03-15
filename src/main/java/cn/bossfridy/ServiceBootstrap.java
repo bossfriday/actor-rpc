@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static cn.bossfridy.Const.CPU_PROCESSORS;
+
 @Slf4j
 public abstract class ServiceBootstrap implements IPlugin {
 
@@ -110,14 +112,12 @@ public abstract class ServiceBootstrap implements IPlugin {
         });
     }
 
-    private static final int cpuProcessors;
     private static final int defaultMin;
     private static final int defaultMax;
 
     static {
-        cpuProcessors = Runtime.getRuntime().availableProcessors();
-        defaultMin = (cpuProcessors / 2) <= 0 ? 1 : (cpuProcessors / 2);
-        defaultMax = cpuProcessors;
+        defaultMin = (CPU_PROCESSORS / 2) <= 0 ? 1 : (CPU_PROCESSORS / 2);
+        defaultMax = CPU_PROCESSORS;
     }
 
     private static int getActorExecutorMin(ActorRoute route) {

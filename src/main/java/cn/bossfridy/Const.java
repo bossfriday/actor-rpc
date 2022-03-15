@@ -1,6 +1,17 @@
 package cn.bossfridy;
 
 public class Const {
+    private static final int cpuProcessors;
+
+    static {
+        cpuProcessors = Runtime.getRuntime().availableProcessors();
+    }
+
+    /**
+     * common
+     */
+    public static final int CPU_PROCESSORS = cpuProcessors;
+
     /**
      * thread pool name
      */

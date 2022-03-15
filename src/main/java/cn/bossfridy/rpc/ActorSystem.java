@@ -67,7 +67,7 @@ public class ActorSystem {
     /**
      * start
      */
-    public void start() {
+    public void start() throws Exception {
         this.inBox.start();
         this.sendBox.start();
         this.isStarted = true;

@@ -8,11 +8,9 @@ import cn.bossfridy.rpc.actor.UntypedActor;
 import cn.bossfridy.rpc.interfaces.IActorMsgDecoder;
 import cn.bossfridy.rpc.interfaces.IActorMsgEncoder;
 import cn.bossfridy.utils.GsonUtil;
-import cn.bossfridy.utils.UUIDUtil;
 import cn.bossfridy.zk.ZkChildrenChangeListener;
 import cn.bossfridy.zk.ZkHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -59,7 +57,7 @@ public class ClusterRouter {
     /**
      * startActorSystem
      */
-    public void startActorSystem() {
+    public void startActorSystem() throws Exception {
         if (!this.actorSystem.isStarted()) {
             this.actorSystem.start();
         }
