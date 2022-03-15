@@ -1,6 +1,7 @@
 > Actor 模型及 Akka 简介
 
-# V1.0 ReleaseNote
+# ReleaseNote
+## V1.0 
 * 使用protostuff序列化（.proto文件编写恶心，与Protocol Buffer性能几乎接近）
 * 使用Netty进行通讯（同节点RPC不走网络，直接入收件箱队列）；
 * 路由策略：随机路由、指定Key路由、资源Id路由、强制路由
@@ -13,7 +14,7 @@ cn.bossfridy.rpc.test.actorsystem.Bootstrap
 带路由测试示例代码入口（依赖ZK，配置文件：test/resources/servie-config.xml）：
 cn.bossfridy.rpc.test.router.Bootstrap
 
-# V1.1 ReleaseNote --todo
+## V1.1 
 * 使用Disruptor优化收件箱、发件箱；
 
     Disruptor是一个高性能的有界内存队列，它在 Apache Storm、Camel、Log4j 2 等很多知名项目中都有广泛应用。之所以如此受青睐，主要还是因为它的性能表现非常优秀。它比 Java 中另外一个非常常用的内存消息队列 ArrayBlockingQueue（ABS）的性能，要高一个数量级，可以算得上是最快的内存消息队列了。它还因此获得过 Oracle 官方的 Duke 大奖。
