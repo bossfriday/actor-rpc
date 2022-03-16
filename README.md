@@ -1,4 +1,4 @@
-> Actor 模型及 Akka 简介
+> 基于Actor模型用JAVA实现的RPC介绍
 
 # 1. ReleaseNote
 ## 1.1 V1.0 
