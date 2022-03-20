@@ -18,7 +18,8 @@ cn.bossfridy.rpc.test.router.Bootstrap
 * **使用Disruptor优化收件箱、发件箱；**   
 
 # 2. 性能测试表现
-todo
+详见：https://blog.csdn.net/camelials/article/details/123614068
+
 
 # 3. Actor 模型及 Akka 简介
 ## 3.1 背景
