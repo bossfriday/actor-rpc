@@ -1,3 +1,5 @@
+** 该项目停止维护，最新版本请详见：https://github.com/bossfriday/bossfriday-nubybear中的common模块**
+
 > 基于Actor模型用JAVA实现的RPC介绍
 
 # 1. ReleaseNote
